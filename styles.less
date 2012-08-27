@@ -1,0 +1,211 @@
+body{
+	font-family: 'Helvetica Neue';
+	padding-top:75px;
+}
+
+@runColor: #5DDB5E;
+@loopColor: #5D71DB;
+
+.button (@clr: #666){
+	@diff:rgb(20,20,20);
+	padding:5px;
+	border-radius:4px;
+	font-size:18px;
+	text-align:center;
+	display:inline-block;
+
+	background:@clr - @diff;
+	color:white;
+	width:100px;
+	&:hover{
+		background: @clr + @diff;
+	}
+	&.on,
+	&.on:hover{
+		background: @clr;
+	}
+}
+
+.selector (@clr: #000){
+	display:inline-block;
+	width:30px;
+	height:30px;
+	border: 1px solid #000;
+	margin-right: 8px;
+	font-size:32px;
+	color: rgba(180, 180, 180, 0.1);
+	&:hover{
+		background: @clr - #999;
+	}
+	&:active{
+		background:@clr - #999;
+		-moz-box-shadow:    inset 0 0 20px @clr;
+		-webkit-box-shadow: inset 0 0 20px @clr;
+		box-shadow:         inset 0 0 20px @clr;
+	}
+	&.on{
+		background:@clr;
+	}
+}
+
+.scroll{
+	width:600px;
+	margin:0 auto;
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif; 
+	background:white;
+	padding:20px;
+	h1{
+		color:#CF3500;
+	}
+	h2{color:#EF3E00;}
+	ul{
+		list-style:circle;
+	}
+	ul li{
+		margin-bottom:10px;
+		font-size:12px;
+	}
+	ul li span{
+		font-weight:bold;
+	}
+}
+
+.clear{clear:both;}
+
+#ui{
+	width:960px;
+	margin:0 auto;
+    .frame{
+		width:960px;
+		overflow-x:scroll;
+		margin-bottom: 15px;
+		.slider{
+			width: 960px;
+			margin-bottom:20px;
+			position: relative;
+			padding-bottom: 11px;
+			padding-top:11px;
+			div.row{
+				margin-bottom: 8px;
+				span{
+					.selector;
+				}
+			}
+			#p{span{
+					.selector(red);
+				}}
+			#c{span{
+					.selector(yellow);
+				}}
+			#x{span{
+					.selector(black);
+				}}
+			#f{span{
+					.selector(green);
+				}}
+			#b{span{
+					.selector(red);
+				}}
+
+			#num,
+			#result{
+				position: absolute;
+				bottom:0;
+				z-index: -1;
+				span{
+					text-align: center;
+					display: inline-block;
+					width: 32px;
+					font-family: Courier;
+					font-size: 9px;
+					margin-right: 7px;
+					border-right: 1px solid transparent;
+					border-left: 1px solid transparent;
+					margin-left: -1px;
+					&.on{
+						background:#F5F04F;
+					}
+				}
+			}
+			#result{
+				bottom:auto;
+				top:0;
+				height:11px;
+			}
+		}
+    }
+
+	
+	
+	#buttons{
+		margin-bottom:35px;
+		#run{
+			.button(@runColor);
+		}
+		#isLoop{
+			.button(@loopColor);
+		}
+		#clear{
+			.button();
+		}
+		#more{
+			.button(purple);
+		}
+	}
+	.device{
+		border:1px solid #000;
+		display:inline-block;
+		width:294px;
+		height:50px;
+		padding:8px;
+		.sequence{
+			font-size:12px;
+			font-weight:normal;
+		}
+		.total{
+			font-size:16px;
+			font-weight:bold;
+		}
+	}
+
+	#log{
+		border:1px solid #000;
+		display:inline-block;
+		overflow-y:scroll;
+		width:950px;
+		height:80px;
+
+		.container{
+			padding-left: 40px;
+			font-family: Courier;
+			font-size:11px;
+			padding-top: 0;
+			margin-top: 4px;
+			li pre{
+    			margin: 0;
+			}
+		}
+	}
+}
+#serial{
+	position:absolute;
+	bottom:0px;
+	padding-bottom:15px;
+	width:100%;
+	.container{
+		width:960px;
+		margin:0 auto;
+		position:relative;
+	}
+	#serialNameCam,
+	#serialNameProj{
+		display:inline-block;
+		font-family: Courier;
+		border:1px solid #666;
+		height:28px;
+		width:200px;
+		font-size:12px;
+		color:#000;
+		background:rgb(222,222,222);
+	}
+}
