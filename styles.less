@@ -1,3 +1,8 @@
+@font-face {
+    font-family: "Josefin Sans";
+    src: url(JosefinSans-Regular.ttf);
+}
+
 body{
 	font-family: 'Helvetica Neue';
 	padding-top:75px;
@@ -7,6 +12,7 @@ body{
 @loopColor: #5D71DB;
 
 .button (@clr: #666){
+	cursor:pointer;
 	@diff:rgb(20,20,20);
 	padding:5px;
 	border-radius:4px;
@@ -27,6 +33,7 @@ body{
 }
 
 .selector (@clr: #000){
+	cursor:pointer;
 	display:inline-block;
 	width:30px;
 	height:30px;
@@ -71,118 +78,128 @@ body{
 }
 
 .clear{clear:both;}
-
-#ui{
-	width:960px;
-	margin:0 auto;
-    .frame{
+#web{
+	#ui{
 		width:960px;
-		overflow-x:scroll;
-		margin-bottom: 15px;
-		.slider{
-			width: 960px;
-			margin-bottom:20px;
-			position: relative;
-			padding-bottom: 11px;
-			padding-top:11px;
-			div.row{
-				margin-bottom: 8px;
-				span{
-					.selector;
-				}
+		margin:0 auto;
+	    .frame{
+			width:960px;
+			overflow-x:scroll;
+			margin-bottom: 15px;
+			.labels{
+				position:absolute;
+				font-size: 11px;
+				line-height: 40px;
+				margin: 4px 0 0 -16px;
+				font-family: 'Courier';	
 			}
-			#p{span{
-					.selector(red);
-				}}
-			#c{span{
-					.selector(yellow);
-				}}
-			#x{span{
-					.selector(black);
-				}}
-			#f{span{
-					.selector(green);
-				}}
-			#b{span{
-					.selector(red);
-				}}
-
-			#num,
-			#result{
-				position: absolute;
-				bottom:0;
-				z-index: -1;
-				span{
-					text-align: center;
-					display: inline-block;
-					width: 32px;
-					font-family: Courier;
-					font-size: 9px;
-					margin-right: 7px;
-					border-right: 1px solid transparent;
-					border-left: 1px solid transparent;
-					margin-left: -1px;
-					&.on{
-						background:#F5F04F;
+			.slider{
+				width: 960px;
+				margin-bottom:20px;
+				position: relative;
+				padding-bottom: 11px;
+				padding-top:11px;
+				div.row{
+					margin-bottom: 8px;
+					span{
+						.selector;
 					}
 				}
+				#p{span{
+						.selector(red);
+					}}
+				#c{span{
+						.selector(yellow);
+					}}
+				#x{span{
+						.selector(black);
+					}}
+				#f{span{
+						.selector(green);
+					}}
+				#b{span{
+						.selector(red);
+					}}
+
+				#num,
+				#result{
+					position: absolute;
+					bottom:0;
+					z-index: -1;
+					span{
+						text-align: center;
+						display: inline-block;
+						width: 32px;
+						font-family: Courier;
+						font-size: 9px;
+						margin-right: 7px;
+						border-right: 1px solid transparent;
+						border-left: 1px solid transparent;
+						margin-left: -1px;
+						&.on{
+							background:#F5F04F;
+						}
+					}
+				}
+				#result{
+					bottom:auto;
+					top:0;
+					height:11px;
+				}
 			}
-			#result{
-				bottom:auto;
-				top:0;
-				height:11px;
+	    }
+
+		#buttons{
+			margin-bottom:35px;
+			#run{
+				.button(@runColor);
+			}
+			#isLoop{
+				.button(@loopColor);
+			}
+			#clear{
+				.button();
+			}
+			#more{
+				.button(purple);
 			}
 		}
-    }
+		.device{
+			border:1px solid #000;
+			display:inline-block;
+			width:294px;
+			height:50px;
+			padding:8px;
+			.sequence{
+				font-size:12px;
+				font-weight:normal;
+			}
+			.total{
+				font-size:16px;
+				font-weight:bold;
+			}
+		}
 
-	
-	
-	#buttons{
-		margin-bottom:35px;
-		#run{
-			.button(@runColor);
+		#ipadButtons{
+			display:none;
 		}
-		#isLoop{
-			.button(@loopColor);
-		}
-		#clear{
-			.button();
-		}
-		#more{
-			.button(purple);
-		}
-	}
-	.device{
-		border:1px solid #000;
-		display:inline-block;
-		width:294px;
-		height:50px;
-		padding:8px;
-		.sequence{
-			font-size:12px;
-			font-weight:normal;
-		}
-		.total{
-			font-size:16px;
-			font-weight:bold;
-		}
-	}
 
-	#log{
-		border:1px solid #000;
-		display:inline-block;
-		overflow-y:scroll;
-		width:950px;
-		height:80px;
+		#log{
+			border:1px solid #000;
+			display:inline-block;
+			overflow-y:scroll;
+			width:950px;
+			height:80px;
 
-		.container{
-			padding-left: 40px;
-			font-family: Courier;
-			font-size:11px;
-			padding-top: 0;
-			margin-top: 4px;
-			li pre{
-    			margin: 0;
+			.container{
+				padding-left: 40px;
+				font-family: Courier;
+				font-size:11px;
+				padding-top: 0;
+				margin-top: 4px;
+				li pre{
+	    			margin: 0;
+				}
 			}
 		}
 	}
@@ -208,4 +225,201 @@ body{
 		color:#000;
 		background:rgb(222,222,222);
 	}
+}
+
+
+
+@iBg:rgb(28,27,32);
+@iClr:rgb(129,221,155);
+@diff:rgb(20,20,20);
+
+.buttoniPad (){
+	cursor:pointer;
+	padding:0;
+	border-radius:0px;
+	font-size:30px;
+	text-align:center;
+	display:inline-block;
+	width:210px;
+	height:69px;
+	background:transparent;
+	margin-right:13px;
+	color:@iClr;
+	border: 1px solid @iClr;
+	line-height:69px;
+	&.on{
+		background: @iClr;
+		color:@iBg;
+	}
+}
+
+.selectoriPad (){
+	cursor:pointer;
+	display:inline-block;
+	width:50px;
+	height:50px;
+	border: 1px solid @iClr;
+	margin-right: 19px;
+	&:active{
+		background: @iClr;
+		-moz-box-shadow:    inset 0 0 20px @iBg;
+		-webkit-box-shadow: inset 0 0 20px @iBg;
+		box-shadow:         inset 0 0 20px @iBg;
+	}
+	&.on{
+		background: @iClr;
+	}
+}
+
+.ipadButtons (){
+	cursor:pointer;
+	display:inline-block;
+	width:430px;
+	height:105px;
+	font-size:50px;
+	border:1px solid @iClr;
+	text-align:center;
+	line-height:105px;
+	margin-right: 35px;
+	margin-bottom: 15px;
+	&:active{
+		background: @iClr;
+		color: @iBg;
+	}
+	&.on{
+		background: @iClr;
+		color: @iBg;
+	}
+}
+
+#iPad{
+	a{
+		color:@iClr;
+		text-decoration:none;
+	}
+	background:@iBg;
+	color:@iClr;
+	font-family: "Josefin Sans";
+	text-transform:uppercase;
+	padding:0;
+	margin:0;
+	height:100%;
+	width:100%;
+	#ui{
+		padding-left: 40px;
+		padding-top:20px;
+		width: 960px;
+		margin:0 auto;
+		    .frame{
+			width:905px;
+			overflow-x:hidden;
+			margin-bottom: 15px;
+			.labels{
+				position:absolute;
+				font-size:17px;
+				line-height: 60px;
+				margin: 11px 0 0 -19px;	
+			}
+			.slider{
+				width: 960px;
+				margin-bottom:20px;
+				position: relative;
+				padding-bottom: 11px;
+				padding-top:15px;
+				div.row{
+					margin-bottom: 8px;
+					width: 1000em;
+					span{
+						.selectoriPad();
+					}
+				}
+				#p{span{
+						.selectoriPad();
+					}}
+				#c{span{
+						.selectoriPad();
+					}}
+				#x{span{
+						.selectoriPad();
+					}}
+				#f{span{
+						.selectoriPad();
+					}}
+				#b{span{
+						.selectoriPad();
+					}}
+
+				#num,
+				#result{
+					position: absolute;
+					bottom:0;
+					z-index: -1;
+					width:1000em;
+					span{
+						text-align: center;
+						display: inline-block;
+						width: 50px;
+						font-family: "Josefin Sans";
+						font-size: 12px;
+						margin-right: 20px;
+						border-right: 1px solid transparent;
+						border-left: 1px solid transparent;
+						text-decoration:none;
+						color:@iClr;
+						&.on{
+							background:#F5F04F;
+						}
+					}
+				}
+				#result{
+					bottom:auto;
+					top:0;
+					height:11px;
+				}
+			}
+	    }
+		#buttons{
+			margin-bottom:35px;
+			#run{
+				.buttoniPad();
+			}
+			#isLoop{
+				.buttoniPad();
+			}
+			#clear{
+				.buttoniPad();
+			}
+			#more{
+				.buttoniPad();
+			}
+		}
+		.device{
+			display:none;
+		}
+		#log{
+			display:none;
+		}
+		#ipadButtons{
+			#backward{
+				.ipadButtons();
+			}
+			#forward{
+				.ipadButtons();
+			}
+			#black{
+				.ipadButtons();
+			}
+			#camera{
+				.ipadButtons();
+			}
+		}
+	}
+
+	#serial{
+		display:none;
+	}
+}
+
+#iPhone{
+
 }

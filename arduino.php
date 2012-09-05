@@ -12,7 +12,12 @@
 		$fpp = fopen("/dev/".$newObj['serial']['p'], "w");
 		$mcopyMode = true;
 	}
-	usleep(1100000);
+	
+	if ($mcopyMode) {
+		usleep(2100000);
+	} else {
+		usleep(1100000);
+	}
 
 	$total = count($newObj['val']);
 	$timing = $newObj['timing'];
@@ -25,9 +30,8 @@
 	for ($i = 0; $i < $total; $i++){
 		if ($newObj['val'][$i] != "") {
 			$cmd = $newObj['val'][$i];
-
 			if ($mcopyMode) {
-				if ($cmd == 'f' ||$cmd == 'b') {
+				if ($cmd == 'f' || $cmd == 'b') {
 					fwrite($fpp, $cmd);
 				} else if ($cmd == 'c') {
 					fwrite($fpc, '3');

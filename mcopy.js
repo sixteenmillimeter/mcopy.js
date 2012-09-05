@@ -1,8 +1,9 @@
 var arduino = {
 	serial : {
-		'c' : 'cu.usbmodem1a161',
-		'p' : 'cu.usbmodem1a161'
+		'c' : 'cu.usbserial-A800f8dk',
+		'p' : 'cu.usbserial-A900cebm'
 	},
+	cmd : ['f', 'b', 'c', 'x', 'p'],
 	timing : {
 		'f' : 1000,
 		'b' : 2000,
@@ -12,9 +13,9 @@ var arduino = {
 	},
 	post : function(arr, delegate){
 		'use strict';
-		var arrOut = new Array();
+		var arrOut = [];
 		for (var i in arr) {
-			if (arr[i] !== '') {
+			if ($.inArray(arr[i], arduino.cmd) !== -1) {
 				arrOut = arrOut.concat(arr[i]);
 			}
 		}
@@ -58,7 +59,8 @@ var mcopy = {
 				setTimeout('mcopy.run()',delay);
 				//this.run();
 			}
-			ui.response(data);
+			//ui.response(data);
+			mcopy_ui.response(data);
 		}
 	}
 };
@@ -124,9 +126,6 @@ var ui = {
 				mcopy.sequence[i];
 			}
 		});
-	},
-	_mobileInit : function () {
-		$('body').empty();
 	},
 	response : function (data){
 		'use strict';
@@ -222,13 +221,16 @@ var mcopy_ui = {
 			//console.log('off');
 			mcopy_ui.deleteRelease = false;
 		});
+
+		$('.labels').html('c<br />f<br />b<br />x');
+
 		for (var i = 0; i < 24; i++) {
 			mcopy.sequence[i] = '';
 			$('#p').hide();
-			$('#c').append('<span>c</span>');
-			$('#f').append('<span>f</span>');
-			$('#b').append('<span>b</span>');
-			$('#x').append('<span>x</span>');
+			$('#c').append('<span></span>');
+			$('#f').append('<span></span>');
+			$('#b').append('<span></span>');
+			$('#x').append('<span></span>');
 			$('#num').append('<span>' + i + '</span>');
 			$('#result').append('<span></span>');
 		}
@@ -255,14 +257,13 @@ var mcopy_ui = {
 			$('.row .on').each(function (){
 				$(this).removeClass('on');
 			});
-			for ( var i in mcopy.sequence) {
-				mcopy.sequence[i];
+			for (var i in mcopy.sequence) {
+				mcopy.sequence[i] = '';
 				$('#result span').eq(i).text('');
 			}
 			mcopy_ui.next = 0;
 		});
 		$('#more').bind('click',function () {
-			//ui.more();
 			mcopy_ui.more();
 		});
 
@@ -274,7 +275,7 @@ var mcopy_ui = {
 			k.f = 70;
 			k.b = 66;
 			k.x = 88;
-			k.delete = 46;
+			k['delete'] = 46;
 			k.back = 8;
 			if (e.keyCode === k.c){
 				mcopy_ui.set('c', mcopy_ui.next);
@@ -284,7 +285,7 @@ var mcopy_ui = {
 				mcopy_ui.set('b', mcopy_ui.next);
 			} else if (e.keyCode === k.x) {
 				mcopy_ui.set('x', mcopy_ui.next);
-			} else if (e.keyCode === k.delete || e.keyCode === k.back) {
+			} else if (e.keyCode === k['delete'] || e.keyCode === k.back) {
 				if (!mcopy_ui.deleteRelease){
 					var c = mcopy.sequence[mcopy_ui.next-1];
 					if (c !== ''){
@@ -296,6 +297,99 @@ var mcopy_ui = {
 					return false;
 				}
 			}
+		});
+
+	},
+	_iPadinit : function () {
+		'use strict';
+		$('body').attr('id', 'iPad');
+		$('#more').text('+13');
+		$('.labels').html('c<br />f<br />b<br />x');
+		for (var i = 0; i < 13; i++) {
+			mcopy.sequence[i] = '';
+			$('#p').hide();
+			$('#c').append('<span></span>');
+			$('#f').append('<span></span>');
+			$('#b').append('<span></span>');
+			$('#x').append('<span></span>');
+			$('#num').append('<span>' + i + '</span>');
+			$('#result').append('<span></span>');
+		}
+		$('#ipadButtons').show();
+
+		$('#ui div span').live('touchstart', function () {
+			var row = $(this).parent().attr('id'),
+			col = $(this).index();
+			mcopy_ui.set(row, col);
+		});
+		$('#isLoop').bind('touchstart', function () {
+			if ($(this).hasClass('on')) {
+				mcopy.isLoop = false;
+				$(this).text('Loop: off');
+			} else {
+				mcopy.isLoop = true;
+				$(this).text('Loop: on');
+			}
+			$(this).toggleClass('on');
+		});
+
+		$('#run').bind('touchstart', function () {
+			$(this).addClass('on');
+			mcopy.run();
+		});
+		//touch end doesn't end class on in this case
+
+		$('#clear').bind('touchstart', function () {
+			$(this).addClass('on');
+			$('.row .on').each(function (){
+				$(this).removeClass('on');
+			});
+			for ( var i in mcopy.sequence) {
+				mcopy.sequence[i] = '';
+				$('#result span').eq(i).text('');
+			}
+			mcopy_ui.next = 0;
+		});
+		$('#clear').bind('touchend', function () {
+			$(this).removeClass('on');
+		});
+
+		$('#more').bind('touchstart',function () {
+			$(this).addClass('on');
+			mcopy_ui.more(13);
+		});
+		$('#more').bind('touchend',function () {
+			$(this).removeClass('on');
+		});
+
+		//ipad triggers
+		$('#backward').bind('touchstart', function () {
+			$(this).addClass('on');
+			arduino.post(['b'], mcopy.response);
+			setTimeout(function () {
+				$('#backward').removeClass('on')
+			}, arduino.timing['b']);
+		});
+		$('#forward').bind('touchstart', function () {
+			$(this).addClass('on');
+			arduino.post(['f'], mcopy.response);
+			setTimeout(function () {
+				$('#forward').removeClass('on')
+			}, arduino.timing['f']);
+		});
+		$('#black').bind('touchstart', function () {
+			$(this).addClass('on');
+			arduino.post(['x'], mcopy.response);
+			setTimeout(function () {
+				$('#black').removeClass('on')
+			}, arduino.timing['x']);
+		});
+		$('#camera').bind('touchstart', function () {
+			$(this).addClass('on');
+			arduino.post(['c'], mcopy.response);
+			setTimeout(function () {
+				$('#camera').removeClass('on')
+			}, arduino.timing['c']);
 		});
 
 	},
@@ -336,10 +430,10 @@ var mcopy_ui = {
 			w = $('.slider').width();
 		$('.slider').width(w + (many * Math.round(960/24)));	
 		for(var i = state; i < many+state; i++){
-			$('#c').append('<span>c</span>');
-			$('#f').append('<span>f</span>');
-			$('#b').append('<span>b</span>');
-			$('#x').append('<span>x</span>');
+			$('#c').append('<span></span>');
+			$('#f').append('<span></span>');
+			$('#b').append('<span></span>');
+			$('#x').append('<span></span>');
 			$('#num').append('<span>' + i + '</span>');
 			$('#result').append('<span></span>');
 		}
@@ -487,12 +581,29 @@ var defaultDelegate  = function (data) {
 	console.dir(data);
 }
 
+var iOS = {
+	isiPad : navigator.userAgent.match(/iPad/i) !== null,
+	isiPhone : navigator.userAgent.match(/iPhone/i) !== null,
+	isiPod : navigator.userAgent.match(/iPod/i) !== null,
+	isinApp : window.navigator.standalone,
+	BlockMove: function (event) {
+  	// Tell Safari not to move the window.
+  		event.preventDefault();
+ 	}
+}
+
 /*
 
 */
 
 $(document).ready(function () {
 	//ui._init();
+	if (iOS.isiPad) {
+		mcopy_ui._iPadinit();
+		return false;
+	} else if (iOS.isiPad) {
+
+	}
 	mcopy_ui._init();
 });
 

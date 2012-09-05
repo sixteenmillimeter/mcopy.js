@@ -1,12 +1,17 @@
 <html>
 <head>
-
+<title>mcopy</title>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="transparent" />
+<meta name="viewport" content="user-scalable=no">
+<link rel="apple-touch-icon" href="mcopyWEB.png" />
 <link rel="stylesheet/less" type="text/css" href="styles.less">
 </head>
-<body>
+<body id="web" ontouchmove="iOS.BlockMove(event);">
 
 <div id="ui">
 	<div class="frame">
+		<div class="labels"></div>
 		<div class="slider">
 			<div id="num">
 			</div>
@@ -40,6 +45,12 @@
 		<div class="total">total: <span>0</span></div>
 	</div>
 -->
+	<div id="ipadButtons">
+		<div id="backward">BACKWARD</div>
+		<div id="forward">FORWARD</div>
+		<div id="black">BLACK</div>
+		<div id="camera">CAMERA</div>
+	</div>
 	<div id="log">
 		<ol class="container" start="0">
 			<li><pre>Printer Log</pre>
