@@ -1,84 +1,77 @@
-<?php
-	// Nonzero number to be sent to Arduino
+<?php 
+	//Arduino 2
+	//configuration header
+	ini_set('max_execution_time', 86400);
 
-	$sentObj = file_get_contents('php://input');
-	$newObj = json_decode($sentObj,true);
-
-	$mcopyMode = false;
-
-	exec("mode com1: BAUD=9600 PARITY=N data=8 stop=1 xon=off");
-	$fpc = fopen("/dev/".$newObj['serial']['c'], "w");
-	if($newObj['serial']['c'] != $newObj['serial']['p']){
-		$fpp = fopen("/dev/".$newObj['serial']['p'], "w");
-		$mcopyMode = true;
-	}
-	
-	if ($mcopyMode) {
-		usleep(2100000);
-	} else {
-		usleep(1100000);
-	}
-
-	$total = count($newObj['val']);
-	$timing = $newObj['timing'];
+	$rawPost = file_get_contents('php://input');
+	$postObj = json_decode($rawPost,true);
+	$total = count($postObj['val']);
+	$timing = $postObj['timing'];
 	$time = 0;
-	$success = 'true';
+	$mcopyMode = false;
+	$response = new response();
 
-	$jsonOut = '';
-	$jsonOut .= '{"val":';
-	$jsonOut .= '[';
-	for ($i = 0; $i < $total; $i++){
-		if ($newObj['val'][$i] != "") {
-			$cmd = $newObj['val'][$i];
-			if ($mcopyMode) {
-				if ($cmd == 'f' || $cmd == 'b') {
-					fwrite($fpp, $cmd);
-				} else if ($cmd == 'c') {
-					fwrite($fpc, '3');
-				} else if ($cmd == 'x'){
-					fwrite($fpp, $cmd);
-					usleep(300000);
-					fwrite($fpc, '3');
+	if ($postObj != undefined && $postObj != null && $total != 0) {
+		exec("mode com1: BAUD=9600 PARITY=N data=8 stop=1 xon=off");
+		$fpc = fopen("/dev/".$postObj['serial']['c'], "w");
+		if($postObj['serial']['c'] != $postObj['serial']['p']){
+			$fpp = fopen("/dev/".$postObj['serial']['p'], "w");
+			$mcopyMode = true;
+			usleep(2100000);	//Pause in to allow for multiple arduino reset
+			$time += 2100;
+		} else {
+			usleep(1100000);	//Pause in to allow for arduino reset
+			$time += 1100;
+		}
+		//perform actions
+		for ($i = 0; $i < $total; $i++){
+			if ($postObj['val'][$i] != "" && $postObj['val'][$i] != null) {
+				$cmd = $postObj['val'][$i];
+				if ($mcopyMode) {
+					if ($cmd == 'f' || $cmd == 'b') {
+						fwrite($fpp, $cmd);
+					} else if ($cmd == 'c') {
+						fwrite($fpc, '3');
+					} else if ($cmd == 'x'){
+						fwrite($fpp, $cmd);
+						usleep(300000);
+						fwrite($fpc, '3');
+					}
+				} else {
+					fwrite($fpc, $cmd);
 				}
-			} else {
-				fwrite($fpc, $cmd);
-			}
-			
-			usleep($timing[$cmd] * 1000);
-
-			$time += $timing[$cmd];
-			$jsonOut .= '"';
-			$jsonOut .= $cmd;
-			$jsonOut .= '"';
-			if ($i != $total-1 && $newObj['val'][$i+1] != "") {
-				$jsonOut .= ',';
+				usleep($timing[$cmd] * 1000);
+				$time += $timing[$cmd];
 			}
 		}
+		$response->val = $postObj['val'];
+		$response->time = $time;
+		$response->success = 'true';
+		if ($mcopyMode) {
+			fclose($fpc);
+			fclose($fpp);
+		} else {
+			fclose($fpc);
+		}
+	} else if ($total == 0) {
+		$response->error = 'No commands submitted';
 	}
-	$jsonOut .= '],';
+	$printOut = json_encode($response);
+	echo $printOut;
+?>	
 
-	if ($mcopyMode) {
-		fclose($fpc);
-		fclose($fpp);
-	} else {
-		fclose($fpc);
-	}
-	
-	usleep(300000);
-	
-	if($total < 1){
-		$success = 'false';
-	}
-	$jsonOut .= '"success":' . $success . ',';
-	$jsonOut .='"time":' . $time;
-	$jsonOut .= '}';
+<?php 
 
-	echo $jsonOut;
-
+//RESPONSE CLASS
+class response {
+	public $val = array();
+	public $success = 'false';
+	public $error = null;
+	public $time = 0;
+}
 
 /*
-
-Copyright (c) 2012 Matthew McWilliams matt@sixteenmillimeter.com
+Copyleft 2012 Matthew McWilliams matt@sixteenmillimeter.com
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),

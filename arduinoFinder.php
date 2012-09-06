@@ -2,8 +2,8 @@
 //arduino finder
 function arduinoFinder() {
 		//LIBRARY of known arduinos
-		$known = array('usbmodem1a161', 'usbserial-A800f8dk', 'usbserial-A900cebm');
-		
+		$known = array('usbmodem1a161', 'usbserial-A800f8dk', 'usbserial-A900cebm', 'usbmodem1a131');
+
 
 
 		$result=shell_exec('ls /dev/tty.*');

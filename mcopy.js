@@ -506,7 +506,7 @@ var jk = {
 	mem : [],
 	PGM : function () {
 		'use strict';
-		if (this.mem.length === 0 || this.mem.length < 2) {
+		if (this.mem.length === 0 || this.mem.length < 1) {
 			this.mem.push('PGM MODE');
 		}
 	},
