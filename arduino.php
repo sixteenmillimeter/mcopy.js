@@ -12,7 +12,6 @@
 	$response = new response();
 
 	if ($postObj != undefined && $postObj != null && $total != 0) {
-		exec("mode com1: BAUD=9600 PARITY=N data=8 stop=1 xon=off");
 		$fpc = fopen("/dev/".$postObj['serial']['c'], "w");
 		if($postObj['serial']['c'] != $postObj['serial']['p']){
 			$fpp = fopen("/dev/".$postObj['serial']['p'], "w");
@@ -56,6 +55,13 @@
 	} else if ($total == 0) {
 		$response->error = 'No commands submitted';
 	}
+	/*
+	$myFile = "sessionLog.txt";
+	$fh = fopen($myFile, 'w') or die("can't open file");
+	$data = fread($fh);
+	echo $data;
+	fclose($fh);
+	*/
 	$printOut = json_encode($response);
 	echo $printOut;
 ?>	

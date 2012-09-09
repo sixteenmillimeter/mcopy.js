@@ -11,6 +11,7 @@ var arduino = {
 		'x' : 2000,
 		'p' : 1000
 	},
+	//USE FOR SENDING LONGER ARRAYS
 	post : function(arr, delegate){
 		'use strict';
 		var arrOut = [];
