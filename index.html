@@ -4,8 +4,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="transparent" />
 <meta name="viewport" content="user-scalable=no">
-<link rel="apple-touch-icon" href="mcopyWEB.png" />
-<link rel="stylesheet/less" type="text/css" href="styles.less">
+<link rel="apple-touch-icon" href="style/mcopyWEB.png" />
+<link rel="stylesheet/less" type="text/css" href="style/styles.less">
+<script src="http://lynksis.local:8080/socket.io/socket.io.js"></script>
 </head>
 <body id="web" ontouchmove="iOS.BlockMove(event);">
 
@@ -32,6 +33,7 @@
 	<div id="buttons">
 		<div id="run">Run</div>
 		<div id="isLoop">Loop: off</div>
+		<div id="loopTimes">Loop x <input id="loopTimesVal" value="1"/></div>
 		<div id="clear">Clear</div>
 		<div id="more">More +24</div>
 	</div>
@@ -60,14 +62,15 @@
 
 <div id="serial">
 	<div class="container">
-		<input id="serialNameCam" name="serialName"></input>
-		<input id="serialNameProj" name="serialName"></input>
+		CAM: <input id="serialNameCam" name="serialName"></input>
+		PROJ: <input id="serialNameProj" name="serialName"></input>
+		<div id="connect">Connect</div>
 	</div>
 </div>
 
-<script type="text/javascript" src="jquery.min.js"></script>
-<script src="less.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="mcopy.js"></script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/less.min.js" ></script>
+<script src="scripts/mcopy.js"></script>
 
 </body>
 </html>
