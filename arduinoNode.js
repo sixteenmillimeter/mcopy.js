@@ -35,9 +35,9 @@ io.sockets.on('connection', function (socket) {
  				noduino.arduinoC = new noduino.serial('/dev/' + arr[0]);
  				console.log('successfully connected')
 	 		} else if (arr.length === 2) {
-
+	 			noduino.arduinoC = new noduino.serial('/dev/' + arr[0]);
+	 			noduino.arduinoP = new noduino.serial('/dev/' + arr[1]);
 	 		}
-	 		
  		} else {
  			console.log('already connected');
  		}
@@ -51,11 +51,27 @@ io.sockets.on('connection', function (socket) {
  		for (var i in arr) {
  			console.log(arr[i]);
  			if ( i === 0) {
- 				noduino.arduinoC.write(arr[i]);
+ 				noduino.writeCase(arr[i]);
  			} else {
- 				//setTimeout(function () {
- 					noduino.arduinoC.write(arr[i]);
- 				//}, noduino.timing[arr[i]]);
+ 				setTimeout(function () {
+ 					noduino.writeCase(arr[i]);
+ 				}, noduino.timing[arr[i]]);
+ 			}
+ 		}
+ 	},
+ 	writeCase : function (c) {
+ 		if (noduino.arduinoP === null) {
+ 			noduino.arduinoC.write(c);
+ 		} else if (noduino.arduinoC !== null && noduino.arduinoP !== null ){
+ 			if (c === 'c') {
+ 				noduino.arduinoC.write(c);
+ 			} else if (c === 'f' || c === 'b') {
+ 				noduino.arduinoP.write(c);
+ 			} else if (c === 'x') {
+ 				noduino.arduinoP.write(c);
+ 				setTimeout(function () {
+ 					noduino.arduinoC.write('c');
+ 				}, 300);
  			}
  		}
  	}
