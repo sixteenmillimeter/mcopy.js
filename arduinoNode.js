@@ -2,6 +2,7 @@ var sys = require("sys"),
 	fs = require('fs'),
 	io = require('socket.io').listen(8080);
 
+//socket server
 io.sockets.on('connection', function (socket) {
   socket.on('connectPrinter', function(data){
   	noduino._init(data);
@@ -21,10 +22,10 @@ io.sockets.on('connection', function (socket) {
 	arduinoC : null,
 	arduinoP : null,
 	timing : {
-		'f' : 1000,
+		'f' : 1300,
 		'b' : 2000,
 		'c' : 1000,
-		'x' : 2000,
+		'x' : 2500,
 		'p' : 1000
 	},
  	_init : function (arr) {
@@ -33,7 +34,7 @@ io.sockets.on('connection', function (socket) {
  			noduino.serial = require("serialport").SerialPort;
  			if (arr.length === 1) {
  				noduino.arduinoC = new noduino.serial('/dev/' + arr[0]);
- 				console.log('successfully connected')
+ 				console.log('successfully connected');
 	 		} else if (arr.length === 2) {
 	 			noduino.arduinoC = new noduino.serial('/dev/' + arr[0]);
 	 			noduino.arduinoP = new noduino.serial('/dev/' + arr[1]);
@@ -49,14 +50,7 @@ io.sockets.on('connection', function (socket) {
 	},
  	write : function (arr) {
  		for (var i in arr) {
- 			console.log(arr[i]);
- 			if ( i === 0) {
  				noduino.writeCase(arr[i]);
- 			} else {
- 				setTimeout(function () {
- 					noduino.writeCase(arr[i]);
- 				}, noduino.timing[arr[i]]);
- 			}
  		}
  	},
  	writeCase : function (c) {
@@ -64,13 +58,13 @@ io.sockets.on('connection', function (socket) {
  			noduino.arduinoC.write(c);
  		} else if (noduino.arduinoC !== null && noduino.arduinoP !== null ){
  			if (c === 'c') {
- 				noduino.arduinoC.write(c);
+ 				noduino.arduinoC.write('3');
  			} else if (c === 'f' || c === 'b') {
  				noduino.arduinoP.write(c);
  			} else if (c === 'x') {
  				noduino.arduinoP.write(c);
  				setTimeout(function () {
- 					noduino.arduinoC.write('c');
+ 					noduino.arduinoC.write('3');
  				}, 300);
  			}
  		}

@@ -1,3 +1,5 @@
+var machineName = 'lynksis.local';
+
 var arduino = {
 	serial : {
 		'c' : 'cu.usbserial-A800f8dk',
@@ -5,10 +7,10 @@ var arduino = {
 	},
 	cmd : ['f', 'b', 'c', 'x', 'p'],
 	timing : {
-		'f' : 1000,
+		'f' : 1300,
 		'b' : 2000,
 		'c' : 1000,
-		'x' : 2000,
+		'x' : 2500,
 		'p' : 1000
 	},
 	//USE FOR SENDING LONGER ARRAYS
@@ -50,15 +52,33 @@ var arduino = {
      		$('#serialNameCam').val(arduino.serial.c);
 			$('#serialNameProj').val(arduino.serial.p);
 			if (io !== undefined) {
-				socket = io.connect('http://lynksis.local:8080');
+				socket = io.connect('http://' + machineName + ':8080');
 				socket.emit('connectPrinter', data);
 			}
      	} else if (data.length === 2) {
      		//mcopy detected.
+     		data[0] = 'cu.usbserial-A800f8dk';
+     		data[1] = 'cu.usbserial-A900cebm';
+     		arduino.serial.c = data[0];
+     		arduino.serial.p = data[1];
+     		$('#serialNameCam').val(arduino.serial.c);
+			$('#serialNameProj').val(arduino.serial.p);
+			if (io !== undefined) {
+				socket = io.connect('http://' + machineName + ':8080');
+				socket.emit('connectPrinter', data);
+			}
      	}
      	//console.dir(data);
      }
 }
+
+var arduinoNode = {
+	runSequence: function (arr) {
+		for (var i in arr) {
+			socket.emit('printerWrite', [arr[i]]);
+		}
+	}
+};
 
 var mcopy = {
 	//Set the sequence, then run.
@@ -68,7 +88,6 @@ var mcopy = {
 	run : function () {
 		'use strict';
 		arduino.post(this.sequence, this.response);
-
 	},
 	isLoop : false,
 	response : function (data) {
@@ -176,7 +195,7 @@ var ui = {
 	},
 	more : function (many) {
 		'use strict';
-		if(many===undefined||many===null){
+		if (many === undefined || many === null) {
 
 		}
 	},
@@ -389,32 +408,16 @@ var mcopy_ui = {
 
 		//ipad triggers
 		$('#backward').bind('touchstart', function () {
-			$(this).addClass('on');
-			arduino.post(['b'], mcopy.response);
-			setTimeout(function () {
-				$('#backward').removeClass('on')
-			}, arduino.timing['b']);
+			socket.emit('printerWrite', ['b']);
 		});
 		$('#forward').bind('touchstart', function () {
-			$(this).addClass('on');
-			arduino.post(['f'], mcopy.response);
-			setTimeout(function () {
-				$('#forward').removeClass('on')
-			}, arduino.timing['f']);
+			socket.emit('printerWrite', ['f']);
 		});
 		$('#black').bind('touchstart', function () {
-			$(this).addClass('on');
-			arduino.post(['x'], mcopy.response);
-			setTimeout(function () {
-				$('#black').removeClass('on')
-			}, arduino.timing['x']);
+			socket.emit('printerWrite', ['x']);
 		});
 		$('#camera').bind('touchstart', function () {
-			$(this).addClass('on');
-			arduino.post(['c'], mcopy.response);
-			setTimeout(function () {
-				$('#camera').removeClass('on')
-			}, arduino.timing['c']);
+			socket.emit('printerWrite', ['c']);
 		});
 
 	},
@@ -423,44 +426,16 @@ var mcopy_ui = {
 		$('body').attr('id', 'iPhone');
 		//ipad triggers
 		$('#backward').bind('touchstart', function () {
-			/*
-			$(this).addClass('on');
-			arduino.post(['b'], mcopy.response);
-			setTimeout(function () {
-				$('#backward').removeClass('on')
-			}, arduino.timing['b']);
-			*/
 			socket.emit('printerWrite', ['b']);
 		});
 		$('#forward').bind('touchstart', function () {
-			/*
-			$(this).addClass('on');
-			arduino.post(['f'], mcopy.response);
-			setTimeout(function () {
-				$('#forward').removeClass('on')
-			}, arduino.timing['f']);
-			*/
 			socket.emit('printerWrite', ['f']);
 		});
 		$('#black').bind('touchstart', function () {
-			/*
-			$(this).addClass('on');
-			arduino.post(['x'], mcopy.response);
-			setTimeout(function () {
-				$('#black').removeClass('on')
-			}, arduino.timing['x']);
-			*/
 			socket.emit('printerWrite', ['x']);
 		});
 		$('#camera').bind('touchstart', function () {
-			/*
-			$(this).addClass('on');
-			arduino.post(['c'], mcopy.response);
-			setTimeout(function () {
-				$('#camera').removeClass('on')
-			}, arduino.timing['c']);
-			*/
-			socket.emit('printerWrite', ['x']);
+			socket.emit('printerWrite', ['c']);
 		});
 
 	},
