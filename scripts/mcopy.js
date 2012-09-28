@@ -1,6 +1,5 @@
-var machineName = 'lynksis.local';
-
-var arduino = {
+var machineName = 'lynksis.local',
+arduino = {
 	serial : {
 		'c' : 'cu.usbserial-A800f8dk',
 		'p' : 'cu.usbserial-A900cebm'
@@ -51,9 +50,8 @@ var arduino = {
      		arduino.serial.p = data[0];
      		$('#serialNameCam').val(arduino.serial.c);
 			$('#serialNameProj').val(arduino.serial.p);
-			if (io !== undefined) {
-				socket = io.connect('http://' + machineName + ':8080');
-				socket.emit('connectPrinter', data);
+			if (arduinoNode.socketsOn) {
+				arduinoNode._connect(data);
 			}
      	} else if (data.length === 2) {
      		//mcopy detected.
@@ -63,20 +61,32 @@ var arduino = {
      		arduino.serial.p = data[1];
      		$('#serialNameCam').val(arduino.serial.c);
 			$('#serialNameProj').val(arduino.serial.p);
-			if (io !== undefined) {
-				socket = io.connect('http://' + machineName + ':8080');
-				socket.emit('connectPrinter', data);
+			if (arduinoNode.socketsOn) {
+				arduinoNode._connect(data);
 			}
-     	}
+     	} else if (data.length === 0) {
+     		//debug mode
+     	} 
      	//console.dir(data);
      }
 }
 
 var arduinoNode = {
-	runSequence: function (arr) {
-		for (var i in arr) {
-			socket.emit('printerWrite', [arr[i]]);
+	_connect: function (data){
+		socket = io.connect('http://' + machineName + ':8080');
+		socket.emit('connectPrinter', data);
+	},
+	socketsOn: function () {
+		if (io !== undefined) {
+			return true;
 		}
+		return false;
+	},
+	write: function (cmd){
+		socket.emit('printerWrite', [cmd]);
+	},
+	run: function (arr){
+		socket.emit('printerWrite', arr);
 	}
 };
 
@@ -85,9 +95,21 @@ var mcopy = {
 	sequence : [],
 	camTotal : 0,
 	projTotal : 0,
+	write: function (cmd) {
+		'use strict';
+		if (arduinoNode.socketsOn) {
+			ardunoNode.write(cmd);
+		} else {
+			arduino.post([cmd], this.response);
+		}
+	},
 	run : function () {
 		'use strict';
-		arduino.post(this.sequence, this.response);
+		if (arduinoNode.socketsOn) {
+			ardunoNode.run(this.sequence);
+		} else {
+			arduino.post(this.sequence, this.response);
+		}
 	},
 	isLoop : false,
 	response : function (data) {
@@ -100,8 +122,7 @@ var mcopy = {
 					delay += arduino.timing[data.val[i]];
 				}
 				delay + 300;
-				setTimeout('mcopy.run()',delay);
-				//this.run();
+				setTimeout('mcopy.run()', delay);
 			}
 			//ui.response(data);
 			mcopy_ui.response(data);
@@ -186,7 +207,11 @@ var ui = {
 				}
 			}
 		}
-		loggedd = loggedd.substring(0, loggedd.length-3)
+		loggedd = loggedd.substring(0, loggedd.length-3);
+
+		//TODO: ADD VISUALIZATION OF AT LEAST CAMERA + PROJECTOR TOTALS
+		console.log('CAM: ' + mcopy.camTotal);
+		console.log('PROJ: ' + mcopy.camTotal);
 		//$('').text(mcopy.camTotal);
 		//$('').text(mcopy.camTotal);
 		if (data.success !== false){
@@ -241,28 +266,29 @@ var mcopy_ui = {
 	next : 0,
 	_init : function () {
 		'use strict';
+
 		$('#serialNameCam').val(arduino.serial.c);
 		$('#serialNameProj').val(arduino.serial.p);
+
 		$('#serialNameCam').change(function () {
 			arduino.serial.c = $(this).val();
 		});
+
 		$('#serialNameCam').focus(function () {
-			//console.log('on');
 			mcopy_ui.deleteRelease = true;
 		});
 		$('#serialNameCam').focusout(function () {
-			//console.log('off');
 			mcopy_ui.deleteRelease = false;
 		});
+
 		$('#serialNameProj').change(function () {
 			arduino.serial.p = $(this).val();
 		});
+
 		$('#serialNameProj').focus(function () {
-			//console.log('on');
 			mcopy_ui.deleteRelease = true;
 		});
 		$('#serialNameProj').focusout(function () {
-			//console.log('off');
 			mcopy_ui.deleteRelease = false;
 		});
 
@@ -293,6 +319,7 @@ var mcopy_ui = {
 			}
 			$(this).toggleClass('on');
 		});
+
 		$('#run').bind('click', function () {
 			$(this).addClass('on');
 			mcopy.run();
@@ -402,22 +429,22 @@ var mcopy_ui = {
 			$(this).addClass('on');
 			mcopy_ui.more(13);
 		});
-		$('#more').bind('touchend',function () {
+		$('#more').bind('touchend', function () {
 			$(this).removeClass('on');
 		});
 
 		//ipad triggers
 		$('#backward').bind('touchstart', function () {
-			socket.emit('printerWrite', ['b']);
+			mcopy.write('b');
 		});
 		$('#forward').bind('touchstart', function () {
-			socket.emit('printerWrite', ['f']);
+			mcopy.write('f');
 		});
 		$('#black').bind('touchstart', function () {
-			socket.emit('printerWrite', ['x']);
+			mcopy.write('x');
 		});
 		$('#camera').bind('touchstart', function () {
-			socket.emit('printerWrite', ['c']);
+			mcopy.write('c');
 		});
 
 	},
@@ -426,18 +453,17 @@ var mcopy_ui = {
 		$('body').attr('id', 'iPhone');
 		//ipad triggers
 		$('#backward').bind('touchstart', function () {
-			socket.emit('printerWrite', ['b']);
+			mcopy.write('b');
 		});
 		$('#forward').bind('touchstart', function () {
-			socket.emit('printerWrite', ['f']);
+			mcopy.write('f');
 		});
 		$('#black').bind('touchstart', function () {
-			socket.emit('printerWrite', ['x']);
+			mcopy.write('x');
 		});
 		$('#camera').bind('touchstart', function () {
-			socket.emit('printerWrite', ['c']);
+			mcopy.write('c');
 		});
-
 	},
 	//@param: row - char
 	//@param: col - char
@@ -502,7 +528,9 @@ var mcopy_ui = {
 				}
 			}
 		}
-		loggedd = loggedd.substring(0, loggedd.length-3)
+		loggedd = loggedd.substring(0, loggedd.length-3);
+		console.log('CAM: ' + mcopy.camTotal);
+		console.log('PROJ: ' + mcopy.camTotal);
 		//$('').text(mcopy.camTotal);
 		//$('').text(mcopy.camTotal);
 		if (data.success !== false){
@@ -641,18 +669,6 @@ var socket = null;
 
 $(document).ready(function () {
 	//ui._init();
-	//setTimeout(function () {
-			
-	
-	  /*
-	  socket.on('connectPrinterResponse', function (data){
-	  	console.dir(data);
-	  	setTimeout(function () {
-	  		socket.emit('printerWrite', ['f']);
-	  	}, 1100);
-	  });
-	*/
-	//}, 3000);
 	arduino.finder(arduino.finderResponse);
 	if (iOS.isiPad) {
 		mcopy_ui._iPadinit();

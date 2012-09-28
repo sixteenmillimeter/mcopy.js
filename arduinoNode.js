@@ -1,22 +1,9 @@
+
 var sys = require("sys"), 
 	fs = require('fs'),
 	io = require('socket.io').listen(8080);
 
-//socket server
-io.sockets.on('connection', function (socket) {
-  socket.on('connectPrinter', function(data){
-  	noduino._init(data);
-  	socket.emit('connectPrinterResponse',{
-  		'success': true
-  	})
-  });
-  socket.on('printerWrite', function(data){
-  	noduino.write(data);
-  });
-});
-
 //noduino class
-
  var noduino = {
  	serial : null,
 	arduinoC : null,
@@ -34,11 +21,20 @@ io.sockets.on('connection', function (socket) {
  			noduino.serial = require("serialport").SerialPort;
  			if (arr.length === 1) {
  				noduino.arduinoC = new noduino.serial('/dev/' + arr[0]);
- 				console.log('successfully connected');
+ 				noduino.arduinoC.on('data', function (data){
+ 					console.log('CAM/PROJ RC:' + data);
+ 				});
 	 		} else if (arr.length === 2) {
 	 			noduino.arduinoC = new noduino.serial('/dev/' + arr[0]);
+	 			noduino.arduinoC.on('data', function (data){
+ 					console.log('CAM RC:' + data);
+ 				});
 	 			noduino.arduinoP = new noduino.serial('/dev/' + arr[1]);
+	 			noduino.arduinoP.on('data', function (data){
+ 					console.log('PROJ RC:' + data);
+ 				});
 	 		}
+	 		console.log('successfully connected');
  		} else {
  			console.log('already connected');
  		}
@@ -48,12 +44,22 @@ io.sockets.on('connection', function (socket) {
 		noduino.arduinoC = null;
 		noduino.arduinoP = null;
 	},
+	time: function (){
+
+	},
  	write : function (arr) {
  		for (var i in arr) {
- 				noduino.writeCase(arr[i]);
+ 			if (i === 0) {
+ 				noduino.writeCases(arr[i]);
+ 			} else {
+ 				setTimeout(function () {
+ 					noduino.writeCases(arr[i]);
+ 				}, noduino.timing[arr[i - 1]]);
+ 			}
+ 			
  		}
  	},
- 	writeCase : function (c) {
+ 	writeCases : function (c) {
  		if (noduino.arduinoP === null) {
  			noduino.arduinoC.write(c);
  		} else if (noduino.arduinoC !== null && noduino.arduinoP !== null ){
@@ -70,3 +76,16 @@ io.sockets.on('connection', function (socket) {
  		}
  	}
  };
+
+//socket server
+io.sockets.on('connection', function (socket) {
+  socket.on('connectPrinter', function(data){
+  	noduino._init(data);
+  	socket.emit('connectPrinterResponse',{
+  		'success': true
+  	})
+  });
+  socket.on('printerWrite', function(data){
+  	noduino.write(data);
+  });
+});
