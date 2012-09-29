@@ -45,7 +45,7 @@ var sys = require("sys"),
 		noduino.arduinoP = null;
 	},
 	time: function (){
-
+		//TODO: time responses
 	},
  	write : function (arr) {
  		for (var i in arr) {
