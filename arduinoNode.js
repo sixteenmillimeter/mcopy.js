@@ -18,21 +18,25 @@ var sys = require("sys"),
  	_init : function (arr) {
  		console.dir(arr);
  		if (noduino.serial === null && noduino.arduinoC === null) {
- 			noduino.serial = require("serialport").SerialPort;
+ 			noduino.sp = require("serialport"),
+ 			noduino.serial = noduino.sp.SerialPort,
+ 			parseObj = {parser : noduino.sp.parsers.readline("\n")};
  			if (arr.length === 1) {
- 				noduino.arduinoC = new noduino.serial('/dev/' + arr[0]);
+ 				noduino.arduinoC = new noduino.serial('/dev/' + arr[0], parseObj);
  				noduino.arduinoC.on('data', function (data){
  					console.log('CAM/PROJ RC:' + data);
  				});
 	 		} else if (arr.length === 2) {
-	 			noduino.arduinoC = new noduino.serial('/dev/' + arr[0]);
+	 			noduino.arduinoC = new noduino.serial('/dev/' + arr[0], parseObj);
 	 			noduino.arduinoC.on('data', function (data){
  					console.log('CAM RC:' + data);
  				});
-	 			noduino.arduinoP = new noduino.serial('/dev/' + arr[1]);
+	 			noduino.arduinoP = new noduino.serial('/dev/' + arr[1], parseObj);
 	 			noduino.arduinoP.on('data', function (data){
  					console.log('PROJ RC:' + data);
  				});
+	 		} else if(arr.length === 0) {
+	 			//TODO: debug mode
 	 		}
 	 		console.log('successfully connected');
  		} else {
