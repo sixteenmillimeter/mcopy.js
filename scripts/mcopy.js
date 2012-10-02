@@ -10,7 +10,8 @@ __/\\\\____________/\\\\________/\\\\\\\\\_______/\\\\\_______/\\\\\\\\\\\\\____
         _\///______________\///________\/////////_______\/////_______\///____________________\///________
 */
 
-var machineName = 'lynksis.local',
+var machineName = window.location.origin,
+socket,
 arduino = {
 	serial : {
 		'c' : 'cu.usbserial-A800f8dk',
@@ -82,11 +83,11 @@ arduino = {
      	//console.dir(data);
      }
 }
-
 var arduinoNode = {
 	_connect: function (data){
-		socket = io.connect('http://' + machineName + ':8080');
+		socket = io.connect(machineName + ':8080');
 		socket.emit('connectPrinter', data);
+		console.log('connected to socket.io');
 	},
 	socketsOn: function () {
 		if (io !== undefined) {
@@ -95,10 +96,8 @@ var arduinoNode = {
 		return false;
 	},
 	write: function (cmd){
-		socket.emit('printerWrite', [cmd]);
-	},
-	run: function (arr){
-		socket.emit('printerWrite', arr);
+		//console.dir(cmd);
+		socket.emit('printerWrite', cmd);
 	}
 };
 
@@ -110,17 +109,23 @@ var mcopy = {
 	write: function (cmd) {
 		'use strict';
 		if (arduinoNode.socketsOn) {
-			ardunoNode.write(cmd);
+			arduinoNode.write([cmd]);
 		} else {
 			arduino.post([cmd], this.response);
 		}
 	},
-	run : function () {
+	runSequence : function () {
 		'use strict';
+		var writeArr = [];
+		for(var i in this.sequence){
+			if(this.sequence[i] === 'f' || this.sequence[i] === 'c' || this.sequence[i] === 'b' || this.sequence[i] === 'x' || this.sequence[i] === 'p'){
+				writeArr.push(this.sequence[i]);
+			}
+		}
 		if (arduinoNode.socketsOn) {
-			ardunoNode.run(this.sequence);
+			arduinoNode.write(writeArr);
 		} else {
-			arduino.post(this.sequence, this.response);
+			arduino.post(writeArr, this.response);
 		}
 	},
 	isLoop : false,
@@ -134,7 +139,7 @@ var mcopy = {
 					delay += arduino.timing[data.val[i]];
 				}
 				delay + 300;
-				setTimeout('mcopy.run()', delay);
+				setTimeout('mcopy.runSequence()', delay);
 			}
 			//ui.response(data);
 			mcopy_ui.response(data);
@@ -193,7 +198,7 @@ var ui = {
 		});
 		$('#run').click(function () {
 			$(this).addClass('on');
-			mcopy.run();
+			mcopy.runSequence();
 		});
 		$('#clear').click(function () {
 			$('.row .on').each(function (){
@@ -334,7 +339,7 @@ var mcopy_ui = {
 
 		$('#run').bind('click', function () {
 			$(this).addClass('on');
-			mcopy.run();
+			mcopy.runSequence();
 		});
 		$('#clear').bind('click', function () {
 			$('.row .on').each(function (){
@@ -418,7 +423,7 @@ var mcopy_ui = {
 
 		$('#run').bind('touchstart', function () {
 			$(this).addClass('on');
-			mcopy.run();
+			mcopy.runSequence();
 		});
 		//touch end doesn't end class on in this case
 

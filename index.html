@@ -6,7 +6,12 @@
 <meta name="viewport" content="user-scalable=no">
 <link rel="apple-touch-icon" href="style/mcopyWEB.png" />
 <link rel="stylesheet/less" type="text/css" href="style/styles.less">
-<script src="http://lynksis.local:8080/socket.io/socket.io.js"></script>
+<!--<script src="http://lynksis.local:8080/socket.io/socket.io.js"></script>-->
+<script type="text/javascript">
+	var machineName = window.location.origin,
+		str = "<script src=" + machineName + ":8080/socket.io/socket.io.js" + "><\/script>";
+	document.write(str);
+</script>
 </head>
 <body id="web" ontouchmove="iOS.BlockMove(event);">
 

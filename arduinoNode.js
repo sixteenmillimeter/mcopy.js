@@ -8,13 +8,6 @@ var sys = require("sys"),
  	serial : null,
 	arduinoC : null,
 	arduinoP : null,
-	timing : {
-		'f' : 1300,
-		'b' : 2000,
-		'c' : 1000,
-		'x' : 2500,
-		'p' : 1000
-	},
  	_init : function (arr) {
  		console.dir(arr);
  		if (noduino.serial === null && noduino.arduinoC === null) {
@@ -24,19 +17,31 @@ var sys = require("sys"),
  			if (arr.length === 1) {
  				noduino.arduinoC = new noduino.serial('/dev/' + arr[0], parseObj);
  				noduino.arduinoC.on('data', function (data){
- 					console.log('CAM/PROJ RC:' + data);
+ 					var first = data.substring(0, 1);
+ 					if (first === 'f' || first === 'x' || first === 'c' || first === 'b' || first === 'p') {
+ 						noduino.writeResponse('mono', first);
+ 					}
  				});
 	 		} else if (arr.length === 2) {
 	 			noduino.arduinoC = new noduino.serial('/dev/' + arr[0], parseObj);
 	 			noduino.arduinoC.on('data', function (data){
- 					console.log('CAM RC:' + data);
+ 					noduino.writeResponse('cam', data);
+ 					//var first = data.substring(0, data.length - 1);
+ 					//if (first === 'f' || first === 'x' || first === 'c' || first === 'b' || first === 'p') {
+ 						//noduino.writeResponse('cam', first);
+ 					//}
  				});
 	 			noduino.arduinoP = new noduino.serial('/dev/' + arr[1], parseObj);
 	 			noduino.arduinoP.on('data', function (data){
- 					console.log('PROJ RC:' + data);
+ 					var first = data.substring(0, 1);
+ 					if (first === 'f' || first === 'x' || first === 'c' || first === 'b' || first === 'p') {
+ 						noduino.writeResponse('proj', first);
+ 					} 				
  				});
 	 		} else if(arr.length === 0) {
 	 			//TODO: debug mode
+	 			//Thought: mono mode works well for debugging if the arduino is set to debug mode
+	 			//might need an additional case, thoug
 	 		}
 	 		console.log('successfully connected');
  		} else {
@@ -51,16 +56,43 @@ var sys = require("sys"),
 	time: function (){
 		//TODO: time responses
 	},
+
+//--------------------------------------------------------------
+// Write sequence
+//--------------------------------------------------------------   
+	sequence: [],
+	which: 0,
  	write : function (arr) {
- 		for (var i in arr) {
- 			if (i === 0) {
- 				noduino.writeCases(arr[i]);
- 			} else {
- 				setTimeout(function () {
- 					noduino.writeCases(arr[i]);
- 				}, noduino.timing[arr[i - 1]]);
+ 		noduino.sequence = arr;
+ 		noduino.writeAction();
+ 	},
+ 	writeAction: function (){
+ 		noduino.writeCases(noduino.sequence[noduino.which]);
+ 	},
+ 	writeResponse: function (source, data){
+ 		if (noduino.arduinoP === null){
+ 			//Nothing special for now...
+ 		} else if (noduino.arduinoC !== null && noduino.arduinoP !== null ) {
+ 			if (source === 'cam' && noduino.sequence[noduino.which] === 'x') {
+ 				console.log(source + ': ' + data);
+ 				return false;
  			}
- 			
+ 		}
+  		if (noduino.sequence.length === 1){
+ 			console.log(source + ': ' + data);
+ 			noduino.sequence = [];
+ 			noduino.which = 0;
+ 		} else if (noduino.sequence.length !== 1 || noduino.sequence.length !== 0) {
+ 			console.log(source + ': ' + data);
+ 			noduino.which++;
+ 			if (noduino.which !== noduino.sequence.length) {
+ 				noduino.writeAction();
+ 			} else {
+ 				console.log('sequence completed:');
+ 				console.log(noduino.sequence);
+ 				noduino.sequence = [];
+ 				noduino.which = 0;
+ 			}
  		}
  	},
  	writeCases : function (c) {
