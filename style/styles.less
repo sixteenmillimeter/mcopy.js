@@ -179,19 +179,21 @@ body{
 				.button(purple);
 			}
 		}
-		.device{
-			border:1px solid #000;
-			display:inline-block;
-			width:294px;
-			height:50px;
-			padding:8px;
-			.sequence{
-				font-size:12px;
-				font-weight:normal;
+		#stats{
+			width:960px;
+			margin:0 auto;
+			height:80px;
+			div{
+				width:480px;
+				font-size:30px;
+				height:70px;
+				text-indent: 60px;
 			}
-			.total{
-				font-size:16px;
-				font-weight:bold;
+			.camera{
+				float:left;
+			}
+			.projector{
+				float: right;
 			}
 		}
 
@@ -416,6 +418,9 @@ body{
 				.buttoniPad();
 			}
 		}
+		#stats{
+			.hide;
+		}
 		.device{
 			.hide;
 		}
@@ -475,6 +480,9 @@ body{
 			.hide;
 	    }
 		#buttons{
+			.hide;
+		}
+		#stats{
 			.hide;
 		}
 		.device{

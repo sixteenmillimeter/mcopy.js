@@ -3,16 +3,16 @@ __/\\\\____________/\\\\________/\\\\\\\\\_______/\\\\\_______/\\\\\\\\\\\\\____
  _\/\\\\\\________/\\\\\\_____/\\\////////______/\\\///\\\____\/\\\/////////\\\_\///\\\____/\\\/__       
   _\/\\\//\\\____/\\\//\\\___/\\\/_____________/\\\/__\///\\\__\/\\\_______\/\\\___\///\\\/\\\/____      
    _\/\\\\///\\\/\\\/_\/\\\__/\\\______________/\\\______\//\\\_\/\\\\\\\\\\\\\/______\///\\\/______     
-    _\/\\\__\///\\\/___\/\\\_\/\\\_____________\/\\\_______\/\\\_\/\\\/////////__________\/\\\_______    
-     _\/\\\____\///_____\/\\\_\//\\\____________\//\\\______/\\\__\/\\\___________________\/\\\_______   
-      _\/\\\_____________\/\\\__\///\\\___________\///\\\__/\\\____\/\\\___________________\/\\\_______  
-       _\/\\\_____________\/\\\____\////\\\\\\\\\____\///\\\\\/_____\/\\\___________________\/\\\_______ 
-        _\///______________\///________\/////////_______\/////_______\///____________________\///________
+	_\/\\\__\///\\\/___\/\\\_\/\\\_____________\/\\\_______\/\\\_\/\\\/////////__________\/\\\_______    
+	 _\/\\\____\///_____\/\\\_\//\\\____________\//\\\______/\\\__\/\\\___________________\/\\\_______   
+	  _\/\\\_____________\/\\\__\///\\\___________\///\\\__/\\\____\/\\\___________________\/\\\_______  
+	   _\/\\\_____________\/\\\____\////\\\\\\\\\____\///\\\\\/_____\/\\\___________________\/\\\_______ 
+		_\///______________\///________\/////////_______\/////_______\///____________________\///________
 */
 
 var machineName = window.location.origin,
-socket,
-arduino = {
+	socket,
+	arduino = {
 	serial : {
 		'c' : 'cu.usbserial-A800f8dk',
 		'p' : 'cu.usbserial-A900cebm'
@@ -25,7 +25,14 @@ arduino = {
 		'x' : 2500,
 		'p' : 1000
 	},
-	//USE FOR SENDING LONGER ARRAYS
+	/* arduino.post
+	* Posts to PHP-based controls located at arduino.php,
+	* falback for when node is not running or cannot be
+	* conected to. 
+	*
+	* @param	arr 	Array 	All commands sent to Arduinos
+	* @param	delegate function Callback for ajax
+	*/
 	post : function(arr, delegate){
 		'use strict';
 		var arrOut = [];
@@ -47,73 +54,132 @@ arduino = {
 			dataType:'json',
 			success : delegate
 		});
-     },
-     finder: function (delegate) {
-     	$.ajax({
-     		url: './php/arduinoFinder.php',
-     		type: 'GET',
-     		success: delegate
-     	});
-     },
-     finderResponse : function (data) {
-     	data = JSON.parse(data);
-     	if (data.length === 1) {
-     		//jk mode or blink
-     		arduino.serial.c = data[0];
-     		arduino.serial.p = data[0];
-     		$('#serialNameCam').val(arduino.serial.c);
+	 },
+	/* arduino.finder
+	* Makes an ajax get of php/arduinoFinder.php and
+	* returns an array of likely arduinos connected to
+	* the host machine. Used for both php-based and node-based
+	* controls but will likely be replaced entirely by node.
+	*
+	* @param	delegate 	function	ajax callback
+	*/
+	 finder: function (delegate) {
+		$.ajax({
+			url: './php/arduinoFinder.php',
+			type: 'GET',
+			success: delegate
+		});
+	 },
+	 /* arduino.finderResponse
+	 * The callback for arduino.finder, determines
+	 * the correct orientation of the arduinos connected
+	 * to the host machine. Evaluates the returned array
+	 * based on length. Currently two detected arduinos
+	 * on host machine results in controls being set to
+	 * default configuration of hard-coded devices.
+	 *
+	 * @param 	data 	Array 	listed arduinos
+	 */
+	 finderResponse : function (data) {
+		data = JSON.parse(data);
+		if (data.length === 1) {
+			//jk mode or blink
+			arduino.serial.c = data[0];
+			arduino.serial.p = data[0];
+			$('#serialNameCam').val(arduino.serial.c);
 			$('#serialNameProj').val(arduino.serial.p);
 			if (arduinoNode.socketsOn) {
-				arduinoNode._connect(data);
+				arduinoNode.connect(data);
 			}
-     	} else if (data.length === 2) {
-     		//mcopy detected.
-     		data[0] = 'cu.usbserial-A800f8dk';
-     		data[1] = 'cu.usbserial-A900cebm';
-     		arduino.serial.c = data[0];
-     		arduino.serial.p = data[1];
-     		$('#serialNameCam').val(arduino.serial.c);
+		} else if (data.length === 2) {
+			//mcopy detected.
+			data[0] = 'cu.usbserial-A800f8dk';
+			data[1] = 'cu.usbserial-A900cebm';
+			arduino.serial.c = data[0];
+			arduino.serial.p = data[1];
+			$('#serialNameCam').val(arduino.serial.c);
 			$('#serialNameProj').val(arduino.serial.p);
 			if (arduinoNode.socketsOn) {
-				arduinoNode._connect(data);
+				arduinoNode.connect(data);
 			}
-     	} else if (data.length === 0) {
-     		//debug mode
-     	} 
-     	//console.dir(data);
-     }
+		} else if (data.length === 0) {
+			//debug mode
+		} 
+		//console.dir(data);
+	 }
 }
+
 var arduinoNode = {
-	_connect: function (data){
+	/* arduinoNode.connect
+	* Connects to node server. Is called by
+	* arduino.finderResponse if socket.io script
+	* is served to client properly. Declares listening
+	* sockets for socket.io. Currently: sequenceComplete.
+	* uiSentCmd, uiRcdCmd
+	*
+	* @param	data 	Array 	List of arduinos
+	*/
+	connect: function (data){
 		socket = io.connect(machineName + ':8080');
 		socket.emit('connectPrinter', data);
 		console.log('connected to socket.io');
+		//OPEN SOCKETS
+		socket.on('sequenceComplete', function (data){
+			console.log('completed sequence:');
+			console.dir(data);
+			mcopy_ui.response(data);
+			if (mcopy.isLoop){
+				if(mcopy.loopTimes !== null){
+					if (mcopy.loopTimes === mcopy.loopCount)
+					mcopy.loopCount++;
+				}
+				mcopy.runSequence();
+			}
+		});
+		socket.on('uiSentCmd', function (data) {
+			console.dir(data);
+		});
+		socket.on('uiRcdCmd', function (data) {
+			console.dir(data);
+		});
 	},
+	/* arduinoNode.socketsOn
+	*
+	*/
 	socketsOn: function () {
 		if (io !== undefined) {
 			return true;
 		}
 		return false;
 	},
+	/* arduinoNode.write
+	*
+	*/
 	write: function (cmd){
-		//console.dir(cmd);
 		socket.emit('printerWrite', cmd);
+		console.log('submitted sequence:');
+		console.dir(cmd);
 	}
 };
 
 var mcopy = {
-	//Set the sequence, then run.
 	sequence : [],
 	camTotal : 0,
 	projTotal : 0,
+	/* mcopy.
+	*
+	*/
 	write: function (cmd) {
 		'use strict';
 		if (arduinoNode.socketsOn) {
-			arduinoNode.write([cmd]);
+			arduinoNode.write([cmd], this.response);
 		} else {
 			arduino.post([cmd], this.response);
 		}
 	},
+	/* mcopy.
+	*
+	*/
 	runSequence : function () {
 		'use strict';
 		var writeArr = [];
@@ -129,6 +195,11 @@ var mcopy = {
 		}
 	},
 	isLoop : false,
+	loopTimes : null,
+	loopCount : null,
+	/* mcopy.
+	*
+	*/
 	response : function (data) {
 		'use strict';
 		console.dir(data);
@@ -275,12 +346,16 @@ var ui = {
 			$('#ui #num').find('.on').removeClass('on');
 		}
 	}
-} //
+} 
 
 var mcopy_ui = {
+	clientType: 'default', //default = web, 'iPad', 'iPhone'
 	projector : 0,
 	camera:0,
 	next : 0,
+	/* mcopy_ui.
+	*
+	*/
 	_init : function () {
 		'use strict';
 
@@ -336,7 +411,16 @@ var mcopy_ui = {
 			}
 			$(this).toggleClass('on');
 		});
-
+		$('#loopTimes').bind('click', function (){
+			mcopy.loopTimes = parseInt($('#loopTimesVal').val());
+			mcopy.loopCount = 0;
+			if ($(this).hasClass('on')) {
+				mcopy.isLoop = false;
+			} else {
+				mcopy.isLoop = true;
+			}
+			$(this).toggleClass('on');
+		});
 		$('#run').bind('click', function () {
 			$(this).addClass('on');
 			mcopy.runSequence();
@@ -388,8 +472,12 @@ var mcopy_ui = {
 		});
 
 	},
+	/* mcopy_ui.
+	*
+	*/
 	_iPadinit : function () {
 		'use strict';
+		mcopy_ui.clientType = 'iPad';
 		$('body').attr('id', 'iPad');
 		$('#more').text('+13');
 		$('.labels').html('c<br />f<br />b<br />x');
@@ -422,8 +510,10 @@ var mcopy_ui = {
 		});
 
 		$('#run').bind('touchstart', function () {
-			$(this).addClass('on');
-			mcopy.runSequence();
+			if (!$(this).hadClass('on')) {
+				$(this).addClass('on');
+				mcopy.runSequence();
+			}
 		});
 		//touch end doesn't end class on in this case
 
@@ -452,39 +542,67 @@ var mcopy_ui = {
 
 		//ipad triggers
 		$('#backward').bind('touchstart', function () {
-			mcopy.write('b');
+			if (!$(this).hadClass('on')) {
+				mcopy.write('b');
+			}
 		});
 		$('#forward').bind('touchstart', function () {
-			mcopy.write('f');
+			if (!$(this).hadClass('on')) {
+				mcopy.write('f');
+			}
 		});
 		$('#black').bind('touchstart', function () {
-			mcopy.write('x');
+			if (!$(this).hadClass('on')) {
+				mcopy.write('x');
+			}
 		});
 		$('#camera').bind('touchstart', function () {
-			mcopy.write('c');
+			if (!$(this).hadClass('on')) {
+				mcopy.write('c');
+			}
 		});
 
 	},
+	/* mcopy_ui.
+	*
+	*/
 	_iPhoneinit : function () {
 		'use strict';
+		mcopy_ui.clientType = 'iPhone';
 		$('body').attr('id', 'iPhone');
 		//ipad triggers
 		$('#backward').bind('touchstart', function () {
-			mcopy.write('b');
+			if (!$(this).hadClass('on')) {
+				mcopy.write('b');
+				$(this).addClass('on');
+			}
 		});
 		$('#forward').bind('touchstart', function () {
-			mcopy.write('f');
+			if (!$(this).hadClass('on')) {
+				mcopy.write('f');
+				$(this).addClass('on');
+			}
 		});
 		$('#black').bind('touchstart', function () {
-			mcopy.write('x');
+			if (!$(this).hadClass('on')) {
+				mcopy.write('x');
+				$(this).addClass('on');
+			}
 		});
 		$('#camera').bind('touchstart', function () {
-			mcopy.write('c');
+			if (!$(this).hadClass('on')) {
+				mcopy.write('c');
+				$(this).addClass('on');
+			}
 		});
 	},
-	//@param: row - char
-	//@param: col - char
-	//@param: alll
+	/* mcopy_ui.
+	*
+	* @param	row 	char
+	* @param	col 	char
+	* @param	a
+	*/
+
 	set : function (row, col) {
 		'use strict';
 		if (col+1 > $('#num span').size()){
@@ -510,6 +628,9 @@ var mcopy_ui = {
 			$('#' + row + ' span').eq(col).parent().parent().find('#result span').eq(col).text(mcopy.sequence[col]);
 			$('#' + row + ' span').eq(col).toggleClass('on');
 	},
+	/* mcopy_ui.
+	*
+	*/
 	more : function (many) {
 		'use strict';
 		if(many===undefined||many===null){
@@ -527,34 +648,59 @@ var mcopy_ui = {
 			$('#result').append('<span></span>');
 		}
 	},
+	/* mcopy_ui.response
+	*
+	* @param	data 	Array 	list of commands
+	*/
 	response : function (data){
 		'use strict';
 		$('#run').removeClass('on');
 		var loggedd = '';
-		for (var i in data.val) {
-			if (data.val[i] !== ''){
-				if (data.val[i] === 'f') {
-					mcopy.projTotal++;
-					loggedd += data.val[i] + ' > ';
-				} else if (data.val[i] === 'b') {
-					mcopy.projTotal--;
-					loggedd += data.val[i] + ' > ';
-				} else if (data.val[i] === 'c' || data.val[i] === 'x') {
-					mcopy.camTotal++;
-					loggedd += data.val[i] + ' > ';
+		if (arduinoNode.socketsOn) {
+			for (var i in data) {
+				if (data[i] !== ''){
+					if (data[i] === 'f') {
+						mcopy.projTotal++;
+						loggedd += data[i] + ' > ';
+					} else if (data[i] === 'b') {
+						mcopy.projTotal--;
+						loggedd += data[i] + ' > ';
+					} else if (data[i] === 'c' || data[i] === 'x') {
+						mcopy.camTotal++;
+						loggedd += data[i] + ' > ';
+					}
+				}
+			}
+		} else {
+			for (var i in data.val) {
+				if (data.val[i] !== ''){
+					if (data.val[i] === 'f') {
+						mcopy.projTotal++;
+						loggedd += data.val[i] + ' > ';
+					} else if (data.val[i] === 'b') {
+						mcopy.projTotal--;
+						loggedd += data.val[i] + ' > ';
+					} else if (data.val[i] === 'c' || data.val[i] === 'x') {
+						mcopy.camTotal++;
+						loggedd += data.val[i] + ' > ';
+					}
 				}
 			}
 		}
+
 		loggedd = loggedd.substring(0, loggedd.length-3);
 		console.log('CAM: ' + mcopy.camTotal);
-		console.log('PROJ: ' + mcopy.camTotal);
-		//$('').text(mcopy.camTotal);
-		//$('').text(mcopy.camTotal);
+		console.log('PROJ: ' + mcopy.projTotal);
+		$('#stats .camera').text('CAM: ' + mcopy.camTotal);
+		$('#stats .projector').text('PROJ: ' + mcopy.projTotal);
 		if (data.success !== false){
 			$('#log .container').append('<li><pre>' + loggedd + '</pre>');
 		}
 	},
 	highlight : {
+		/* mcopy_ui.highlight.
+		*
+		*/
 		start : function (){
 			'use strict';
 			for(var i = 0; i < mcopy.sequence.length; i++){
@@ -570,11 +716,14 @@ var mcopy_ui = {
 				}
 			}
 		},
+		/* mcopy_ui.highlight.
+		*
+		*/
 		next : function () {
 			'use strict';
 			var where = $('#ui #num').find('.on'),
 				pos = where.index();
-			if (pos != -1) {
+			if (pos !== -1) {
 				where.removeClass('on');
 				pos++;
 				$('#ui #num span').eq(pos).addClass('on');
@@ -583,13 +732,15 @@ var mcopy_ui = {
 			}
 			
 		},
+		/* mcopy_ui.highlight.
+		*
+		*/
 		end : function () {
 			'use strict';
 			$('#ui #num').find('.on').removeClass('on');
 		}
 	},
 	deleteRelease: false
-
 
 };
 
@@ -678,9 +829,9 @@ var iOS = {
 	isiPod : navigator.userAgent.match(/iPod/i) !== null,
 	isinApp : window.navigator.standalone,
 	BlockMove: function (event) {
-  	// Tell Safari not to move the window.
-  		event.preventDefault();
- 	}
+	// Tell Safari not to move the window.
+		event.preventDefault();
+	}
 }
 var socket = null;
 
