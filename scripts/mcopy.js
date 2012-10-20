@@ -137,10 +137,12 @@ var arduinoNode = {
 			}
 		});
 		socket.on('uiSentCmd', function (data) {
-			console.dir(data);
+			//console.dir(data);
+			mcopy_ui.highlight.sent(data);
 		});
 		socket.on('uiRcdCmd', function (data) {
-			console.dir(data);
+			//console.dir(data);
+			mcopy_ui.highlight.response(data);
 		});
 	},
 	/* arduinoNode.socketsOn
@@ -353,7 +355,7 @@ var mcopy_ui = {
 	projector : 0,
 	camera:0,
 	next : 0,
-	/* mcopy_ui.
+	/* mcopy_ui.init
 	*
 	*/
 	_init : function () {
@@ -472,7 +474,7 @@ var mcopy_ui = {
 		});
 
 	},
-	/* mcopy_ui.
+	/* mcopy_ui._iPadinit
 	*
 	*/
 	_iPadinit : function () {
@@ -563,7 +565,7 @@ var mcopy_ui = {
 		});
 
 	},
-	/* mcopy_ui.
+	/* mcopy_ui._iPhoneinit
 	*
 	*/
 	_iPhoneinit : function () {
@@ -596,7 +598,7 @@ var mcopy_ui = {
 			}
 		});
 	},
-	/* mcopy_ui.
+	/* mcopy_ui.set
 	*
 	* @param	row 	char
 	* @param	col 	char
@@ -628,7 +630,7 @@ var mcopy_ui = {
 			$('#' + row + ' span').eq(col).parent().parent().find('#result span').eq(col).text(mcopy.sequence[col]);
 			$('#' + row + ' span').eq(col).toggleClass('on');
 	},
-	/* mcopy_ui.
+	/* mcopy_ui.more
 	*
 	*/
 	more : function (many) {
@@ -698,46 +700,31 @@ var mcopy_ui = {
 		}
 	},
 	highlight : {
+		last: '',
 		/* mcopy_ui.highlight.
 		*
 		*/
-		start : function (){
+		sent : function (obj){
 			'use strict';
-			for(var i = 0; i < mcopy.sequence.length; i++){
-				if(mcopy.sequence[i] != "") {
-					if(i !== 0){
-						//setTimeout('ui.highlight.next()', arduino.timing[mcopy.sequence[i]]);
-						//console.log(mcopy.sequence[i]+' '+arduino.timing[mcopy.sequence[i]])
-					}else{
-						//ui.highlight.next();
-						//setTimeout('ui.highlight.next()',arduino.timing[mcopy.sequence[i]]);
-						//console.log(mcopy.sequence[i]+' '+arduino.timing[mcopy.sequence[i]])
-					}
-				}
+			if(mcopy_ui.clientType === 'default' || mcopy_ui.clientType === 'iPad') {
+				console.dir(obj);
+				obj.which = parseInt(obj.which);
+				$('#num span').eq(obj.which).addClass('on');
+				mcopy_ui.highlight.last = obj.sequence[obj.which];
 			}
 		},
-		/* mcopy_ui.highlight.
+		/* mcopy_ui.highlight.response
 		*
 		*/
-		next : function () {
+		response : function (cmd) {
 			'use strict';
-			var where = $('#ui #num').find('.on'),
-				pos = where.index();
-			if (pos !== -1) {
-				where.removeClass('on');
-				pos++;
-				$('#ui #num span').eq(pos).addClass('on');
-			} else {
-				$('#ui #num span').eq(0).addClass('on');
+			if(mcopy_ui.clientType === 'default' || mcopy_ui.clientType === 'iPad') {
+				if (cmd === mcopy_ui.highlight.last) {
+					$('#num').find('.on').removeClass('on');
+				}
+				
 			}
 			
-		},
-		/* mcopy_ui.highlight.
-		*
-		*/
-		end : function () {
-			'use strict';
-			$('#ui #num').find('.on').removeClass('on');
 		}
 	},
 	deleteRelease: false
