@@ -8,8 +8,8 @@
 <link rel="stylesheet/less" type="text/css" href="style/styles.less">
 <!--<script src="http://lynksis.local:8080/socket.io/socket.io.js"></script>-->
 <script type="text/javascript">
-	var machineName = window.location.origin,
-		str = "<script src=" + machineName + ":8080/socket.io/socket.io.js" + "><\/script>";
+	var machineName = location.hostname,
+		str = "<script src=http://" + machineName + ":8080/socket.io/socket.io.js" + "><\/script>";
 	document.write(str);
 </script>
 </head>
@@ -32,6 +32,8 @@
 			<div id="b" class="row">
 			</div>
 			<div id="x" class="row">
+			</div>
+			<div id="d" class="row">
 			</div>
 		</div>
 	</div>

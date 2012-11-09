@@ -140,6 +140,12 @@ body{
 						margin-left: -1px;
 						&.on{
 							background:#F5F04F;
+							height: 172px;
+							margin-top: -160px;
+							display: inline-block;
+							vertical-align: text-bottom;
+							overflow:hidden;
+							text-indent:1000em;
 						}
 					}
 				}
@@ -389,7 +395,8 @@ body{
 						text-decoration:none;
 						color:@iClr;
 						&.on{
-							background:#F5F04F;
+							background:@iClr;
+							color:@iBg;
 						}
 					}
 				}
@@ -491,7 +498,7 @@ body{
 		#log{
 			.hide;
 		}
-		#iPadButtons{
+		#ipadButtons{
 			display:block;
 			#backward{
 				.iphoneButtons();
