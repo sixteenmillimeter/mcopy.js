@@ -1,0 +1,888 @@
+@font-face {
+  font-family: "Josefin Sans";
+  src: url(JosefinSans-Regular.ttf);
+}
+body {
+  font-family: 'Helvetica Neue';
+  padding-top: 75px;
+}
+.scroll {
+  width: 600px;
+  margin: 0 auto;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  background: white;
+  padding: 20px;
+}
+.scroll h1 {
+  color: #CF3500;
+}
+.scroll h2 {
+  color: #EF3E00;
+}
+.scroll ul {
+  list-style: circle;
+}
+.scroll ul li {
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+.scroll ul li span {
+  font-weight: bold;
+}
+.clear {
+  clear: both;
+}
+.hide {
+  display: none;
+}
+#web #ui {
+  width: 960px;
+  margin: 0 auto;
+}
+#web #ui .frame {
+  width: 960px;
+  overflow-x: scroll;
+  margin-bottom: 15px;
+}
+#web #ui .frame .labels {
+  position: absolute;
+  font-size: 11px;
+  line-height: 40px;
+  margin: 4px 0 0 -16px;
+  font-family: 'Courier';
+}
+#web #ui .frame .slider {
+  width: 960px;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 11px;
+  padding-top: 11px;
+}
+#web #ui .frame .slider div.row {
+  margin-bottom: 8px;
+}
+#web #ui .frame .slider div.row span {
+  cursor: pointer;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #000;
+  margin-right: 8px;
+  font-size: 32px;
+  color: rgba(180, 180, 180, 0.1);
+}
+#web #ui .frame .slider div.row span:hover {
+  background: #000000;
+}
+#web #ui .frame .slider div.row span:active {
+  background: #000000;
+  -moz-box-shadow: inset 0 0 20px #000000;
+  -webkit-box-shadow: inset 0 0 20px #000000;
+  box-shadow: inset 0 0 20px #000000;
+}
+#web #ui .frame .slider div.row span.on {
+  background: #000000;
+}
+#web #ui .frame .slider #p span {
+  cursor: pointer;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #000;
+  margin-right: 8px;
+  font-size: 32px;
+  color: rgba(180, 180, 180, 0.1);
+}
+#web #ui .frame .slider #p span:hover {
+  background: #660000;
+}
+#web #ui .frame .slider #p span:active {
+  background: #660000;
+  -moz-box-shadow: inset 0 0 20px #ff0000;
+  -webkit-box-shadow: inset 0 0 20px #ff0000;
+  box-shadow: inset 0 0 20px #ff0000;
+}
+#web #ui .frame .slider #p span.on {
+  background: #ff0000;
+}
+#web #ui .frame .slider #c span {
+  cursor: pointer;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #000;
+  margin-right: 8px;
+  font-size: 32px;
+  color: rgba(180, 180, 180, 0.1);
+}
+#web #ui .frame .slider #c span:hover {
+  background: #666600;
+}
+#web #ui .frame .slider #c span:active {
+  background: #666600;
+  -moz-box-shadow: inset 0 0 20px #ffff00;
+  -webkit-box-shadow: inset 0 0 20px #ffff00;
+  box-shadow: inset 0 0 20px #ffff00;
+}
+#web #ui .frame .slider #c span.on {
+  background: #ffff00;
+}
+#web #ui .frame .slider #x span {
+  cursor: pointer;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #000;
+  margin-right: 8px;
+  font-size: 32px;
+  color: rgba(180, 180, 180, 0.1);
+}
+#web #ui .frame .slider #x span:hover {
+  background: #000000;
+}
+#web #ui .frame .slider #x span:active {
+  background: #000000;
+  -moz-box-shadow: inset 0 0 20px #000000;
+  -webkit-box-shadow: inset 0 0 20px #000000;
+  box-shadow: inset 0 0 20px #000000;
+}
+#web #ui .frame .slider #x span.on {
+  background: #000000;
+}
+#web #ui .frame .slider #f span {
+  cursor: pointer;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #000;
+  margin-right: 8px;
+  font-size: 32px;
+  color: rgba(180, 180, 180, 0.1);
+}
+#web #ui .frame .slider #f span:hover {
+  background: #000000;
+}
+#web #ui .frame .slider #f span:active {
+  background: #000000;
+  -moz-box-shadow: inset 0 0 20px #008000;
+  -webkit-box-shadow: inset 0 0 20px #008000;
+  box-shadow: inset 0 0 20px #008000;
+}
+#web #ui .frame .slider #f span.on {
+  background: #008000;
+}
+#web #ui .frame .slider #d span {
+  cursor: pointer;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #000;
+  margin-right: 8px;
+  font-size: 32px;
+  color: rgba(180, 180, 180, 0.1);
+}
+#web #ui .frame .slider #d span:hover {
+  background: #000000;
+}
+#web #ui .frame .slider #d span:active {
+  background: #000000;
+  -moz-box-shadow: inset 0 0 20px #808080;
+  -webkit-box-shadow: inset 0 0 20px #808080;
+  box-shadow: inset 0 0 20px #808080;
+}
+#web #ui .frame .slider #d span.on {
+  background: #808080;
+}
+#web #ui .frame .slider #b span {
+  cursor: pointer;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #000;
+  margin-right: 8px;
+  font-size: 32px;
+  color: rgba(180, 180, 180, 0.1);
+}
+#web #ui .frame .slider #b span:hover {
+  background: #660000;
+}
+#web #ui .frame .slider #b span:active {
+  background: #660000;
+  -moz-box-shadow: inset 0 0 20px #ff0000;
+  -webkit-box-shadow: inset 0 0 20px #ff0000;
+  box-shadow: inset 0 0 20px #ff0000;
+}
+#web #ui .frame .slider #b span.on {
+  background: #ff0000;
+}
+#web #ui .frame .slider #num,
+#web #ui .frame .slider #result {
+  position: absolute;
+  bottom: 0;
+  z-index: -1;
+}
+#web #ui .frame .slider #num span,
+#web #ui .frame .slider #result span {
+  text-align: center;
+  display: inline-block;
+  width: 32px;
+  font-family: Courier;
+  font-size: 9px;
+  margin-right: 7px;
+  border-right: 1px solid transparent;
+  border-left: 1px solid transparent;
+  margin-left: -1px;
+}
+#web #ui .frame .slider #num span.on,
+#web #ui .frame .slider #result span.on {
+  background: #F5F04F;
+  height: 172px;
+  margin-top: -160px;
+  display: inline-block;
+  vertical-align: text-bottom;
+  overflow: hidden;
+  text-indent: 1000em;
+}
+#web #ui .frame .slider #result {
+  bottom: auto;
+  top: 0;
+  height: 11px;
+}
+#web #ui #buttons {
+  margin-bottom: 35px;
+}
+#web #ui #buttons #run {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  background: #49c74a;
+  color: white;
+  width: 100px;
+}
+#web #ui #buttons #run:hover {
+  background: #71ef72;
+}
+#web #ui #buttons #run.on,
+#web #ui #buttons #run.on:hover {
+  background: #5ddb5e;
+}
+#web #ui #buttons #isLoop {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  background: #495dc7;
+  color: white;
+  width: 100px;
+}
+#web #ui #buttons #isLoop:hover {
+  background: #7185ef;
+}
+#web #ui #buttons #isLoop.on,
+#web #ui #buttons #isLoop.on:hover {
+  background: #5d71db;
+}
+#web #ui #buttons #loopTimes {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  background: #525252;
+  color: white;
+  width: 100px;
+  width: 160px;
+}
+#web #ui #buttons #loopTimes:hover {
+  background: #7a7a7a;
+}
+#web #ui #buttons #loopTimes.on,
+#web #ui #buttons #loopTimes.on:hover {
+  background: #666666;
+}
+#web #ui #buttons #loopTimes input {
+  display: inline-block;
+  width: 40px;
+  border: none;
+  background: transparent;
+  border-bottom: 1px solid white;
+  color: white;
+  text-align: center;
+}
+#web #ui #buttons #clear {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  background: #525252;
+  color: white;
+  width: 100px;
+}
+#web #ui #buttons #clear:hover {
+  background: #7a7a7a;
+}
+#web #ui #buttons #clear.on,
+#web #ui #buttons #clear.on:hover {
+  background: #666666;
+}
+#web #ui #buttons #more {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  background: #6c006c;
+  color: white;
+  width: 100px;
+}
+#web #ui #buttons #more:hover {
+  background: #941494;
+}
+#web #ui #buttons #more.on,
+#web #ui #buttons #more.on:hover {
+  background: #800080;
+}
+#web #ui #stats {
+  width: 960px;
+  margin: 0 auto;
+  height: 80px;
+}
+#web #ui #stats div {
+  width: 480px;
+  font-size: 30px;
+  height: 70px;
+  text-indent: 60px;
+}
+#web #ui #stats .camera {
+  float: left;
+}
+#web #ui #stats .projector {
+  float: right;
+}
+#web #ui #ipadButtons {
+  display: none;
+}
+#web #ui #log {
+  border: 1px solid #000;
+  display: inline-block;
+  overflow-y: scroll;
+  width: 950px;
+  height: 80px;
+  position: absolute;
+  bottom: 60px;
+}
+#web #ui #log .container {
+  padding-left: 40px;
+  font-family: Courier;
+  font-size: 11px;
+  padding-top: 0;
+  margin-top: 4px;
+}
+#web #ui #log .container li pre {
+  margin: 0;
+}
+#serial {
+  position: absolute;
+  bottom: 0px;
+  padding-bottom: 15px;
+  width: 100%;
+}
+#serial .container {
+  width: 975px;
+  margin: 0 auto;
+  position: relative;
+}
+#serial #serialNameCam,
+#serial #serialNameProj {
+  display: inline-block;
+  font-family: Courier;
+  border: 1px solid #666;
+  height: 32px;
+  width: 200px;
+  font-size: 12px;
+  color: #000;
+  background: #dedede;
+}
+#serial #connect {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  background: #525252;
+  color: white;
+  width: 100px;
+}
+#serial #connect:hover {
+  background: #7a7a7a;
+}
+#serial #connect.on,
+#serial #connect.on:hover {
+  background: #666666;
+}
+#iPad {
+  background: #1c1b20;
+  color: #81dd9b;
+  font-family: "Josefin Sans";
+  text-transform: uppercase;
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+#iPad a {
+  color: #81dd9b;
+  text-decoration: none;
+}
+#iPad #ui {
+  padding-left: 40px;
+  padding-top: 20px;
+  width: 960px;
+  margin: 0 auto;
+}
+#iPad #ui .frame {
+  width: 905px;
+  overflow-x: hidden;
+  margin-bottom: 15px;
+}
+#iPad #ui .frame .labels {
+  position: absolute;
+  font-size: 17px;
+  line-height: 36px;
+  margin: 6px 0 0 -66px;
+  text-align: right;
+}
+#iPad #ui .frame .slider {
+  width: 960px;
+  margin-bottom: 20px;
+  position: relative;
+  padding-bottom: 11px;
+  padding-top: 15px;
+  margin-left: 23px;
+}
+#iPad #ui .frame .slider div.row {
+  margin-bottom: 8px;
+  width: 1000em;
+}
+#iPad #ui .frame .slider div.row span {
+  cursor: pointer;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #81dd9b;
+  margin-right: 10px;
+}
+#iPad #ui .frame .slider div.row span:active {
+  background: #81dd9b;
+  -moz-box-shadow: inset 0 0 20px #1c1b20;
+  -webkit-box-shadow: inset 0 0 20px #1c1b20;
+  box-shadow: inset 0 0 20px #1c1b20;
+}
+#iPad #ui .frame .slider div.row span.on {
+  background: #81dd9b;
+}
+#iPad #ui .frame .slider #p span {
+  cursor: pointer;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #81dd9b;
+  margin-right: 10px;
+}
+#iPad #ui .frame .slider #p span:active {
+  background: #81dd9b;
+  -moz-box-shadow: inset 0 0 20px #1c1b20;
+  -webkit-box-shadow: inset 0 0 20px #1c1b20;
+  box-shadow: inset 0 0 20px #1c1b20;
+}
+#iPad #ui .frame .slider #p span.on {
+  background: #81dd9b;
+}
+#iPad #ui .frame .slider #c span {
+  cursor: pointer;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #81dd9b;
+  margin-right: 10px;
+}
+#iPad #ui .frame .slider #c span:active {
+  background: #81dd9b;
+  -moz-box-shadow: inset 0 0 20px #1c1b20;
+  -webkit-box-shadow: inset 0 0 20px #1c1b20;
+  box-shadow: inset 0 0 20px #1c1b20;
+}
+#iPad #ui .frame .slider #c span.on {
+  background: #81dd9b;
+}
+#iPad #ui .frame .slider #x span {
+  cursor: pointer;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #81dd9b;
+  margin-right: 10px;
+}
+#iPad #ui .frame .slider #x span:active {
+  background: #81dd9b;
+  -moz-box-shadow: inset 0 0 20px #1c1b20;
+  -webkit-box-shadow: inset 0 0 20px #1c1b20;
+  box-shadow: inset 0 0 20px #1c1b20;
+}
+#iPad #ui .frame .slider #x span.on {
+  background: #81dd9b;
+}
+#iPad #ui .frame .slider #f span {
+  cursor: pointer;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #81dd9b;
+  margin-right: 10px;
+}
+#iPad #ui .frame .slider #f span:active {
+  background: #81dd9b;
+  -moz-box-shadow: inset 0 0 20px #1c1b20;
+  -webkit-box-shadow: inset 0 0 20px #1c1b20;
+  box-shadow: inset 0 0 20px #1c1b20;
+}
+#iPad #ui .frame .slider #f span.on {
+  background: #81dd9b;
+}
+#iPad #ui .frame .slider #b span {
+  cursor: pointer;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #81dd9b;
+  margin-right: 10px;
+}
+#iPad #ui .frame .slider #b span:active {
+  background: #81dd9b;
+  -moz-box-shadow: inset 0 0 20px #1c1b20;
+  -webkit-box-shadow: inset 0 0 20px #1c1b20;
+  box-shadow: inset 0 0 20px #1c1b20;
+}
+#iPad #ui .frame .slider #b span.on {
+  background: #81dd9b;
+}
+#iPad #ui .frame .slider #num,
+#iPad #ui .frame .slider #result {
+  position: absolute;
+  bottom: 0;
+  z-index: -1;
+  width: 1000em;
+}
+#iPad #ui .frame .slider #num span,
+#iPad #ui .frame .slider #result span {
+  text-align: center;
+  display: inline-block;
+  width: 25px;
+  font-family: "Josefin Sans";
+  font-size: 12px;
+  margin-right: 10px;
+  border-right: 1px solid transparent;
+  border-left: 1px solid transparent;
+  text-decoration: none;
+  color: #81dd9b;
+}
+#iPad #ui .frame .slider #num span.on,
+#iPad #ui .frame .slider #result span.on {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui .frame .slider #result {
+  bottom: auto;
+  top: 0;
+  height: 11px;
+}
+#iPad #ui #buttons {
+  margin-bottom: 35px;
+}
+#iPad #ui #buttons #run {
+  cursor: pointer;
+  padding: 0;
+  border-radius: 0px;
+  font-size: 30px;
+  text-align: center;
+  display: inline-block;
+  width: 210px;
+  height: 69px;
+  background: transparent;
+  margin-right: 13px;
+  color: #81dd9b;
+  border: 1px solid #81dd9b;
+  line-height: 69px;
+}
+#iPad #ui #buttons #run.on {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #buttons #isLoop {
+  cursor: pointer;
+  padding: 0;
+  border-radius: 0px;
+  font-size: 30px;
+  text-align: center;
+  display: inline-block;
+  width: 210px;
+  height: 69px;
+  background: transparent;
+  margin-right: 13px;
+  color: #81dd9b;
+  border: 1px solid #81dd9b;
+  line-height: 69px;
+}
+#iPad #ui #buttons #isLoop.on {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #buttons #loopTimes {
+  display: none;
+}
+#iPad #ui #buttons #clear {
+  cursor: pointer;
+  padding: 0;
+  border-radius: 0px;
+  font-size: 30px;
+  text-align: center;
+  display: inline-block;
+  width: 210px;
+  height: 69px;
+  background: transparent;
+  margin-right: 13px;
+  color: #81dd9b;
+  border: 1px solid #81dd9b;
+  line-height: 69px;
+}
+#iPad #ui #buttons #clear.on {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #buttons #more {
+  cursor: pointer;
+  padding: 0;
+  border-radius: 0px;
+  font-size: 30px;
+  text-align: center;
+  display: inline-block;
+  width: 210px;
+  height: 69px;
+  background: transparent;
+  margin-right: 13px;
+  color: #81dd9b;
+  border: 1px solid #81dd9b;
+  line-height: 69px;
+}
+#iPad #ui #buttons #more.on {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #stats {
+  display: none;
+}
+#iPad #ui .device {
+  display: none;
+}
+#iPad #ui #log {
+  display: none;
+}
+#iPad #ui #ipadButtons #backward {
+  cursor: pointer;
+  display: inline-block;
+  width: 430px;
+  height: 105px;
+  font-size: 50px;
+  border: 1px solid #81dd9b;
+  text-align: center;
+  line-height: 105px;
+  margin-right: 35px;
+  margin-bottom: 15px;
+}
+#iPad #ui #ipadButtons #backward:active {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #ipadButtons #backward.on {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #ipadButtons #forward {
+  cursor: pointer;
+  display: inline-block;
+  width: 430px;
+  height: 105px;
+  font-size: 50px;
+  border: 1px solid #81dd9b;
+  text-align: center;
+  line-height: 105px;
+  margin-right: 35px;
+  margin-bottom: 15px;
+}
+#iPad #ui #ipadButtons #forward:active {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #ipadButtons #forward.on {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #ipadButtons #black {
+  cursor: pointer;
+  display: inline-block;
+  width: 430px;
+  height: 105px;
+  font-size: 50px;
+  border: 1px solid #81dd9b;
+  text-align: center;
+  line-height: 105px;
+  margin-right: 35px;
+  margin-bottom: 15px;
+}
+#iPad #ui #ipadButtons #black:active {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #ipadButtons #black.on {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #ipadButtons #camera {
+  cursor: pointer;
+  display: inline-block;
+  width: 430px;
+  height: 105px;
+  font-size: 50px;
+  border: 1px solid #81dd9b;
+  text-align: center;
+  line-height: 105px;
+  margin-right: 35px;
+  margin-bottom: 15px;
+}
+#iPad #ui #ipadButtons #camera:active {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #ui #ipadButtons #camera.on {
+  background: #81dd9b;
+  color: #1c1b20;
+}
+#iPad #serial {
+  display: none;
+}
+#iPhone {
+  background: #1c1b20;
+  color: #ff3ecb;
+  font-family: "Josefin Sans";
+}
+#iPhone #ui .frame {
+  display: none;
+}
+#iPhone #ui #buttons {
+  display: none;
+}
+#iPhone #ui #stats {
+  display: none;
+}
+#iPhone #ui .device {
+  display: none;
+}
+#iPhone #ui #log {
+  display: none;
+}
+#iPhone #ui #ipadButtons {
+  display: block;
+}
+#iPhone #ui #ipadButtons #backward {
+  cursor: pointer;
+  display: inline-block;
+  width: 90%;
+  height: 20%;
+  font-size: 130px;
+  border: 2px solid #ff3ecb;
+  text-align: center;
+  line-height: 265px;
+  margin-left: 5%;
+  margin-bottom: 4%;
+}
+#iPhone #ui #ipadButtons #backward:active {
+  background: #ff3ecb;
+  color: #1c1b20;
+}
+#iPhone #ui #ipadButtons #backward.on {
+  background: #ff3ecb;
+  color: #1c1b20;
+}
+#iPhone #ui #ipadButtons #forward {
+  cursor: pointer;
+  display: inline-block;
+  width: 90%;
+  height: 20%;
+  font-size: 130px;
+  border: 2px solid #ff3ecb;
+  text-align: center;
+  line-height: 265px;
+  margin-left: 5%;
+  margin-bottom: 4%;
+}
+#iPhone #ui #ipadButtons #forward:active {
+  background: #ff3ecb;
+  color: #1c1b20;
+}
+#iPhone #ui #ipadButtons #forward.on {
+  background: #ff3ecb;
+  color: #1c1b20;
+}
+#iPhone #ui #ipadButtons #black {
+  cursor: pointer;
+  display: inline-block;
+  width: 90%;
+  height: 20%;
+  font-size: 130px;
+  border: 2px solid #ff3ecb;
+  text-align: center;
+  line-height: 265px;
+  margin-left: 5%;
+  margin-bottom: 4%;
+}
+#iPhone #ui #ipadButtons #black:active {
+  background: #ff3ecb;
+  color: #1c1b20;
+}
+#iPhone #ui #ipadButtons #black.on {
+  background: #ff3ecb;
+  color: #1c1b20;
+}
+#iPhone #ui #ipadButtons #camera {
+  cursor: pointer;
+  display: inline-block;
+  width: 90%;
+  height: 20%;
+  font-size: 130px;
+  border: 2px solid #ff3ecb;
+  text-align: center;
+  line-height: 265px;
+  margin-left: 5%;
+  margin-bottom: 4%;
+}
+#iPhone #ui #ipadButtons #camera:active {
+  background: #ff3ecb;
+  color: #1c1b20;
+}
+#iPhone #ui #ipadButtons #camera.on {
+  background: #ff3ecb;
+  color: #1c1b20;
+}
+#iPhone #serial {
+  display: none;
+}

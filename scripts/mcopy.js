@@ -505,13 +505,14 @@ var mcopy_ui = {
 		mcopy_ui.clientType = 'iPad';
 		$('body').attr('id', 'iPad');
 		$('#more').text('+13');
-		$('.labels').html('c<br />f<br />b<br />x');
-		for (var i = 0; i < 13; i++) {
+		$('.labels').html('cam<br />forward<br />back<br />black<br />delay');
+		for (var i = 0; i < 24; i++) {
 			mcopy.sequence[i] = '';
 			$('#p').hide();
 			$('#c').append('<span></span>');
 			$('#f').append('<span></span>');
 			$('#b').append('<span></span>');
+			$('#d').append('<span></span>');
 			$('#x').append('<span></span>');
 			$('#num').append('<span>' + i + '</span>');
 			$('#result').append('<span></span>');
@@ -598,7 +599,11 @@ var mcopy_ui = {
 				mcopy.write('c');
 			}
 		});
-
+		if ($.getQueryString('device') === 'ipad') {
+			$('*').click(function (){
+				$(this).trigger('touchstart');
+			});
+		}
 	},
 	/* mcopy_ui._iPhoneinit
 	*
@@ -608,6 +613,7 @@ var mcopy_ui = {
 		mcopy_ui.clientType = 'iPhone';
 		$('body').attr('id', 'iPhone');
 		//ipad triggers
+
 		$('#backward').bind('touchstart', function () {
 			if (!$(this).hasClass('on')) {
 				mcopy.write('b');
@@ -632,6 +638,11 @@ var mcopy_ui = {
 				$(this).addClass('on');
 			}
 		});
+		if ($.getQueryString('device') === 'iphone') {
+			$('*').click(function (){
+				$(this).trigger('touchstart');
+			});
+		}
 	},
 	/* mcopy_ui.set
 	*
@@ -681,117 +692,118 @@ var mcopy_ui = {
 			$('#f').append('<span></span>');
 			$('#b').append('<span></span>');
 			$('#x').append('<span></span>');
+			$('#d').append('<span></span>');
 			$('#num').append('<span>' + i + '</span>');
 			$('#result').append('<span></span>');
 		}
 	},
-	/* mcopy_ui.response
-	*
-	* @param	data 	Array 	list of commands
-	*/
-	response : function (data){
-		'use strict';
-		$('#run').removeClass('on');
-		var loggedd = '';
-		if (arduinoNode.socketsOn) {
-			for (var i in data) {
-				if (data[i] !== ''){
-					if (data[i] === 'f') {
-						mcopy.projTotal++;
-						loggedd += data[i] + ' > ';
-					} else if (data[i] === 'b') {
-						mcopy.projTotal--;
-						loggedd += data[i] + ' > ';
-					} else if (data[i] === 'c' || data[i] === 'x') {
-						mcopy.camTotal++;
-						loggedd += data[i] + ' > ';
-					}
-				}
-			}
-		} else {
-			for (var i in data.val) {
-				if (data.val[i] !== ''){
-					if (data.val[i] === 'f') {
-						mcopy.projTotal++;
-						loggedd += data.val[i] + ' > ';
-					} else if (data.val[i] === 'b') {
-						mcopy.projTotal--;
-						loggedd += data.val[i] + ' > ';
-					} else if (data.val[i] === 'c' || data.val[i] === 'x') {
-						mcopy.camTotal++;
-						loggedd += data.val[i] + ' > ';
-					}
-				}
-			}
-		}
-
-		loggedd = loggedd.substring(0, loggedd.length-3);
-
-		console.log('{CAM: ' + mcopy.camTotal + ', PROJ: ' + mcopy.projTotal + '}');
-
-		$('#stats .camera').text('CAM: ' + mcopy.camTotal);
-		$('#stats .projector').text('PROJ: ' + mcopy.projTotal);
-
-		if (data.success !== false){
-			$('#log .container').append('<li><pre>' + loggedd + '</pre>');
-		}
-	},
-	highlight : {
-		last: '',
-		/* mcopy_ui.highlight.
-		*
-		*/
-		sent : function (obj){
-			'use strict';
-			if(mcopy_ui.clientType === 'default' || mcopy_ui.clientType === 'iPad') {
-				obj.which = parseInt(obj.which);
-				$('#num span').eq(obj.which).addClass('on');
-				mcopy_ui.highlight.last = obj.sequence[obj.which];
-			}
-			if (mcopy_ui.clientType === 'iPhone' || mcopy_ui.clientType === 'iPad') {
-				$('#ipadButtons').addClass('locked');
-				var cmd = obj.sequence[obj.which];
-				if (cmd === 'f') {
-					$('#forward').addClass('on');
-				} else if (cmd === 'b') {
-					$('#backward').addClass('on');
-				} else if (cmd === 'c') {
-					$('#camera').addClass('on');
-				} else if (cmd === 'x') {
-					$('#black').addClass('on');
-				}
-			}
-		},
-		/* mcopy_ui.highlight.response
-		*
-		*/
-		response : function (cmd) {
-			'use strict';
-			if(mcopy_ui.clientType === 'default' || mcopy_ui.clientType === 'iPad') {
-				if (cmd === mcopy_ui.highlight.last) {
-					$('#num').find('.on').removeClass('on');
-				}
-			}
-			if (mcopy_ui.clientType === 'iPhone' || mcopy_ui.clientType === 'iPad') {
-				if ($('#ipadButtons').hasClass('locked')) {
-					$('#ipadButtons').removeClass('locked');
-				}
-				if (cmd === 'f') {
-					$('#forward').removeClass('on');
-				} else if (cmd === 'b') {
-					$('#backward').removeClass('on');
-				} else if (cmd === 'c') {
-					$('#camera').removeClass('on');
-				} else if (cmd === 'x') {
-					$('#black').removeClass('on');
-				}
-			}
-			
-		}
-	},
 	deleteRelease: false
 };
+/* mcopy_ui.response
+*
+* @param	data 	Array 	list of commands
+*/
+mcopy_ui.response = function (data){
+	'use strict';
+	$('#run').removeClass('on');
+	var loggedd = '';
+	if (arduinoNode.socketsOn) {
+		for (var i in data) {
+			if (data[i] !== ''){
+				if (data[i] === 'f') {
+					mcopy.projTotal++;
+					loggedd += data[i] + ' > ';
+				} else if (data[i] === 'b') {
+					mcopy.projTotal--;
+					loggedd += data[i] + ' > ';
+				} else if (data[i] === 'c' || data[i] === 'x') {
+					mcopy.camTotal++;
+					loggedd += data[i] + ' > ';
+				}
+			}
+		}
+	} else {
+		for (var i in data.val) {
+			if (data.val[i] !== ''){
+				if (data.val[i] === 'f') {
+					mcopy.projTotal++;
+					loggedd += data.val[i] + ' > ';
+				} else if (data.val[i] === 'b') {
+					mcopy.projTotal--;
+					loggedd += data.val[i] + ' > ';
+				} else if (data.val[i] === 'c' || data.val[i] === 'x') {
+					mcopy.camTotal++;
+					loggedd += data.val[i] + ' > ';
+				}
+			}
+		}
+	}
 
+	loggedd = loggedd.substring(0, loggedd.length-3);
+
+	console.log('{CAM: ' + mcopy.camTotal + ', PROJ: ' + mcopy.projTotal + '}');
+
+	$('#stats .camera').text('CAM: ' + mcopy.camTotal);
+	$('#stats .projector').text('PROJ: ' + mcopy.projTotal);
+
+	if (data.success !== false){
+		$('#log .container').append('<li><pre>' + loggedd + '</pre>');
+	}
+};
+
+mcopy_ui.highlight = {
+	last: '',
+	/* mcopy_ui.highlight.
+	*
+	*/
+	sent : function (obj){
+		'use strict';
+		if(mcopy_ui.clientType === 'default' || mcopy_ui.clientType === 'iPad') {
+			obj.which = parseInt(obj.which);
+			$('#num span').eq(obj.which).addClass('on');
+			mcopy_ui.highlight.last = obj.sequence[obj.which];
+		}
+		if (mcopy_ui.clientType === 'iPhone' || mcopy_ui.clientType === 'iPad') {
+			$('#ipadButtons').addClass('locked');
+			var cmd = obj.sequence[obj.which];
+			if (cmd === 'f') {
+				$('#forward').addClass('on');
+			} else if (cmd === 'b') {
+				$('#backward').addClass('on');
+			} else if (cmd === 'c') {
+				$('#camera').addClass('on');
+			} else if (cmd === 'x') {
+				$('#black').addClass('on');
+			}
+		}
+	},
+	/* mcopy_ui.highlight.response
+	*
+	*/
+	response : function (cmd) {
+		'use strict';
+		if(mcopy_ui.clientType === 'default' || mcopy_ui.clientType === 'iPad') {
+			if (cmd === mcopy_ui.highlight.last) {
+				$('#num').find('.on').removeClass('on');
+			}
+		}
+		if (mcopy_ui.clientType === 'iPhone' || mcopy_ui.clientType === 'iPad') {
+			if ($('#ipadButtons').hasClass('locked')) {
+				$('#ipadButtons').removeClass('locked');
+			}
+			if (cmd === 'f') {
+				$('#forward').removeClass('on');
+			} else if (cmd === 'b') {
+				$('#backward').removeClass('on');
+			} else if (cmd === 'c') {
+				$('#camera').removeClass('on');
+			} else if (cmd === 'x') {
+				$('#black').removeClass('on');
+			}
+		}
+		
+	}
+};
 var jk = {};
 //--------------------------------------------------------------
 // jk Class
@@ -888,10 +900,14 @@ var socket = null;
 
 $(document).ready(function () {
 	arduino.finder(arduino.finderResponse);
-	if (iOS.isiPad) {
+	var q = $.getQueryString('device');
+	if (q === 'comp') {
+		mcopy_ui._init();
+		return false;
+	} else if (iOS.isiPad || q === 'ipad') {
 		mcopy_ui._iPadinit();
 		return false;
-	} else if (iOS.isiPhone) {
+	} else if (iOS.isiPhone || q === 'iphone') {
 		mcopy_ui._iPhoneinit();
 		return false;
 	}
@@ -906,3 +922,28 @@ Array.prototype.remove = function(from, to) {
   this.length = from < 0 ? this.length + from : from;
   return this.push.apply(this, rest);
 };
+
+;(function ($) {
+    $.extend({      
+        getQueryString: function (name) {           
+            function parseParams() {
+                var params = {},
+                    e,
+                    a = /\+/g,  // Regex for replacing addition symbol with a space
+                    r = /([^&=]+)=?([^&]*)/g,
+                    d = function (s) { return decodeURIComponent(s.replace(a, " ")); },
+                    q = window.location.search.substring(1);
+
+                while (e = r.exec(q))
+                    params[d(e[1])] = d(e[2]);
+
+                return params;
+            }
+
+            if (!this.queryStringParams)
+                this.queryStringParams = parseParams(); 
+
+            return this.queryStringParams[name];
+        }
+    });
+})(jQuery);
