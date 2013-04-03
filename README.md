@@ -1,1 +1,1 @@
-mcopy.js is a sequencer GUI for an optical printer
+mcopy.js is a sequencer GUI for optical printers
