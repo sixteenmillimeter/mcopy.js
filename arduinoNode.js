@@ -1,6 +1,7 @@
 
 var sys = require("sys"), 
 	fs = require('fs'),
+	exec = require('child_process').exec,
 	io = require('socket.io').listen(8080);
 
 	io.configure(function () {
@@ -26,7 +27,9 @@ noduino.cmd = ['f', 'x', 'c', 'b', 'p', 'd'];
 noduino.allSockets = function (){};
 noduino.init = function (arr) {
 	'use strict';
+	console.log('noduino.init <!--');
 	console.dir(arr);
+	console.log('noduino.init -->');
 	if (noduino.serial === null && noduino.arduinoC === null) {
 		noduino.sp = require("serialport");
 		noduino.serial = noduino.sp.SerialPort;
@@ -88,12 +91,14 @@ noduino.write = function (arr) {
 	noduino.sequence = arr;
 	noduino.writeAction();
 };
+
 noduino.writeAction = function (){
 	'use strict';
 	noduino.writeCases(noduino.sequence[noduino.which]);
 	console.log('sent ' + noduino.sequence[noduino.which]);
 	noduino.allSockets('uiSentCmd', {'sequence': noduino.sequence, 'which': noduino.which});
 };
+
 noduino.writeResponse = function (source, data){
 	'use strict';
 	var blank = [];
@@ -141,6 +146,7 @@ noduino.writeResponse = function (source, data){
 		}
 	}
 };
+
 noduino.sequenceCompleted = function (){
 	'use strict';
 	console.log('sequence completed:');
@@ -149,6 +155,7 @@ noduino.sequenceCompleted = function (){
 	noduino.sequence = [];
 	noduino.which = 0;
 };
+
 noduino.writeCases = function (c) {
 	'use strict';
 	if (noduino.arduinoP === null) {
@@ -165,6 +172,35 @@ noduino.writeCases = function (c) {
 			}, 300);
 		}
 	}
+};
+
+//ported from arduinoFinder.php
+noduino.find = function (callback) {
+	'use strict';
+		//LIBRARY of known arduinos
+	var known = [
+			'/dev/tty.usbmodem1a161', 
+			'/dev/tty.usbserial-A800f8dk', 
+			'/dev/tty.usbserial-A900cebm', 
+			'/dev/tty.usbmodem1a131',
+			'/dev/tty.usbserial-a900f6de'
+			];
+	var puts = function(error, stdout, stderr) { 
+		if (error === null) {
+			var arduino = [],
+				arr = stdout.split("\n");
+			for (var i = 0; i < arr.length; i++) {
+				var check = arr[i].toLowerCase();
+				if (known.indexOf(check) !== -1 || check.indexOf('usbmodem') !== -1 || check.indexOf('usbserial') !== -1) {
+					arduino.push(arr[i]);
+				}
+			}
+			callback(arduino);
+		} else {
+			callback(error);
+		}
+	};
+	exec('ls /dev/*', puts);
 };
 
 //socket server
