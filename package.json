@@ -1,0 +1,12 @@
+{
+	"name" : "mcopy",
+	"description" : "A GUI to control the mcopy optical printer",
+	"author" : "Matthew McWilliams <matt@sixteenmillimeter.com>",
+	"dependencies" : {
+		"socket.io" : "0.9.x",
+		"serialport" : "1.0.x",
+		"express" : "3.0.x",
+		"connect" : "2.4.x"
+	},
+	"engine" : "node 0.10.x"
+}
